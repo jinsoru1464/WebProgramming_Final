@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/sidebar.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- 사이드바 -->
+    <aside class="sidebar">
+      <div class="logo-area">
+        <a href="/main">
+          <img src="/images/reallogo 1.png" alt="공공재 로고" class="logo" />
+        </a>
+      </div>
+
+      <nav>
+        <ul class="menu">
+          <!-- 홈 -->
+          <li class="<%= currentPage === 'home' ? 'active' : '' %>">
+            <a href="/main" class="menu-item">
+              <div class="left">
+                <img src="/images/<%= currentPage === 'home' ? 'Home_Blue.png' : 'Home.png' %>" class="icon" alt="홈" />
+                <span>홈</span>
+              </div>
+            </a>
+          </li>
+
+          <!-- 공모전 -->
+          <li class="dropdown <%= currentPage === 'contest' ? 'open' : '' %>">
+            <div class="menu-item dropdown-toggle">
+              <div class="left">
+                <img src="/images/<%= currentPage === 'contest' ? 'Trophy_blue.png' : 'Trophy.png' %>" class="icon" alt="공모전" />
+                <span>공모전 페이지</span>
+              </div>
+              <img src="/images/toggle.png" class="arrow-icon" />
+            </div>
+            <ul class="submenu">
+              <li>공모전 정보</li>
+              <li>공모전 팀원 모집</li>
+            </ul>
+          </li>
+
+          <!-- 포트폴리오 -->
+          <li class="<%= currentPage === 'portfolio' ? 'active' : '' %>">
+            <div class="menu-item">
+              <div class="left">
+                <img src="/images/<%= currentPage === 'portfolio' ? 'human_blue.png' : 'human.png' %>" class="icon" alt="포트폴리오" />
+                <span>나의 포트폴리오</span>
+              </div>
+            </div>
+          </li>
+
+          <!-- 커뮤니티 -->
+          <li class="dropdown <%= currentPage === 'community' ? 'open' : '' %>">
+            <div class="menu-item dropdown-toggle">
+              <div class="left">
+                <img src="/images/<%= currentPage === 'community' ? 'Group_blue.png' : 'Group_human.png' %>" class="icon" alt="커뮤니티" />
+                <span>커뮤니티</span>
+              </div>
+              <img src="/images/toggle.png" class="arrow-icon" />
+            </div>
+            <ul class="submenu">
+              <li>스터디원 모집</li>
+              <li>Q&A</li>
+              <li>공모전 후기</li>
+            </ul>
+          </li>
+
+          <!-- 타이머 -->
+          <li class="timer-menu <%= currentPage === 'timer' ? 'active' : '' %>">
+            <div class="menu-item">
+              <div class="left">
+                <img id="timerIcon" src="/images/<%= currentPage === 'timer' ? 'Timer_blue.png' : 'Timer.png' %>" class="icon" alt="타이머" />
+                <span id="timerText">타이머</span>
+              </div>
+            </div>
+
+            <div class="timer-layout">
+              <div class="timer-blocks">
+                <div class="time-group">
+                  <div class="time-cell" id="minuteTens">0</div>
+                  <div class="time-cell" id="minuteOnes">0</div>
+                </div>
+                <div class="colon">:</div>
+                <div class="time-group">
+                  <div class="time-cell" id="secondTens">0</div>
+                  <div class="time-cell" id="secondOnes">0</div>
+                </div>
+              </div>
+
+              <div class="timer-controls">
+                <input type="text" class="keyword-input" placeholder="키워드" />
+                <div class="timer-buttons">
+                  <button class="start-btn"><img src="/images/Play.png" alt="시작" /></button>
+                  <button class="stop-btn"><img src="/images/Stop circle.png" alt="정지" /></button>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- 최근 학습 -->
+      <div class="recent-section">
+        <div class="recent-title">최근 학습</div>
+        <div class="recent-graph" id="recentGraph"></div>
+      </div>
+
+      <!-- 로그아웃 -->
+      <div class="logout-section">
+        <button class="logout-btn" aria-label="로그아웃">
+          <img src="/images/logOut.png" class="logout-icon" />
+          로그아웃
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- JS -->
+  <script>
+    // 드롭다운 메뉴
+    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const parent = toggle.parentElement;
+        parent.classList.toggle('open');
+        const arrow = toggle.querySelector('.arrow-icon');
+        arrow.src = parent.classList.contains('open')
+          ? '/images/toggleUp.png'
+          : '/images/toggle.png';
+      });
+    });
+
+    // 타이머
+    let seconds = 0;
+    let timerInterval;
+
+    const startBtn = document.querySelector('.start-btn');
+    const stopBtn = document.querySelector('.stop-btn');
+    const minuteTens = document.getElementById('minuteTens');
+    const minuteOnes = document.getElementById('minuteOnes');
+    const secondTens = document.getElementById('secondTens');
+    const secondOnes = document.getElementById('secondOnes');
+    const timerLayout = document.querySelector('.timer-layout');
+    const timerMenu = document.querySelector('.timer-menu');
+    const timerText = document.getElementById('timerText');
+    const timerIcon = document.getElementById('timerIcon');
+
+    function updateTimerDisplay() {
+      const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const secs = String(seconds % 60).padStart(2, '0');
+      minuteTens.textContent = mins[0];
+      minuteOnes.textContent = mins[1];
+      secondTens.textContent = secs[0];
+      secondOnes.textContent = secs[1];
+    }
+
+    startBtn.addEventListener('click', () => {
+      if (timerInterval) return;
+      timerInterval = setInterval(() => {
+        seconds++;
+        updateTimerDisplay();
+      }, 1000);
+
+      timerLayout.classList.add('timer-active');
+      timerMenu?.classList.add('timer-on');
+      timerText.style.color = '#2C8FB9';
+      timerIcon.src = '/images/Timer_blue.png';
+    });
+
+    stopBtn.addEventListener('click', () => {
+      clearInterval(timerInterval);
+      timerInterval = null;
+
+      timerLayout.classList.remove('timer-active');
+      timerMenu?.classList.remove('timer-on');
+      timerText.style.color = '';
+      timerIcon.src = '/images/Timer.png';
+
+      const keyword = document.querySelector('.keyword-input').value.trim();
+      if (!keyword) return;
+
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      const displayTime = `${minutes}분 ${secs}초`;
+
+      const recentGraph = document.getElementById('recentGraph');
+      const block = document.createElement('div');
+      block.className = 'block';
+      block.title = `${keyword} - ${displayTime}`;
+      const shade = Math.min(255, 150 + seconds);
+      block.style.backgroundColor = `rgb(${255 - shade}, ${255}, ${255 - shade})`;
+
+      if (recentGraph.children.length >= 5) {
+        recentGraph.removeChild(recentGraph.children[0]);
+      }
+      recentGraph.appendChild(block);
+
+      const token = localStorage.getItem('token');
+      fetch('/api/timer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ keyword, seconds })
+      })
+        .then(res => res.json())
+        .then(data => console.log('✅ 타이머 기록 저장 완료:', data))
+        .catch(err => console.error('❌ 타이머 저장 실패:', err));
+
+      document.querySelector('.keyword-input').value = '';
+      seconds = 0;
+      updateTimerDisplay();
+    });
+
+    // 최근 학습 불러오기 (로그인 후 자동)
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      fetch('/api/timer/recent', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          const recentGraph = document.getElementById('recentGraph');
+          data.reverse().forEach(({ keyword, duration_seconds }) => {
+            const block = document.createElement('div');
+            block.className = 'block';
+
+            const minutes = Math.floor(duration_seconds / 60);
+            const seconds = duration_seconds % 60;
+            block.title = `${keyword} - ${minutes}분 ${seconds}초`;
+
+            const shade = Math.min(255, 150 + duration_seconds);
+            block.style.backgroundColor = `rgb(${255 - shade}, ${255}, ${255 - shade})`;
+
+            recentGraph.appendChild(block);
+          });
+        })
+        .catch(err => console.error('❌ 최근 학습 불러오기 실패', err));
+    });
+
+    // 로그아웃
+    document.querySelector('.logout-btn')?.addEventListener('click', () => {
+      window.location.href = "/login";
+    });
+  </script>
+</body>
+</html>

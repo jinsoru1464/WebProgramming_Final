@@ -1,0 +1,75 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Pretendard', sans-serif;
+  background-color: #f4f7fa;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+
+
+
+/* 메인 콘텐츠 영역 */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+  /* 추가된 박스 스타일 */
+  background-color: white;
+  padding: 60px;
+  margin: 10px 10px;
+  width: 800px; /* 필요 시 조절 */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+
+/* 텍스트와 로고 수평 정렬 */
+.intro-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 80px;
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.intro-text h1 {
+  color: #2b76ba;
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.intro-text p {
+  font-size: 24px;
+  color: #555;
+}
+
+.main-logo img {
+  width: 400px;
+}
+
+/* 버튼 영역 */
+.buttons {
+  display: flex;
+  gap: 80px;
+}
+
+.main-btn {
+  background-color: #4a90e2;
+  color: white;
+  padding: 22px 30px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+}
