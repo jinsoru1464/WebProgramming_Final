@@ -10,7 +10,7 @@
   <div class="login-container">
     <img src="/images/reallogo 1.png" alt="공공재 로고" class="logo-img" id="mainLogo">
 
-    <form class="login-form" method="POST" action="/login">
+    <form class="login-form" id="loginForm">
       <label for="email">이메일</label>
       <input type="email" name="email" id="email" placeholder="이메일을 입력하세요" required>
 
@@ -23,32 +23,66 @@
       <button type="submit" class="login-btn">로그인 하기</button>
     </form>
 
-    <p class="signup-text">아직 회원이 아니신가요? <a href="/signup">회원가입</a></p>
+    <p class="signup-text">아직 회원이 아니신가요? <a href="/signUp">회원가입</a></p>
   </div>
 
   <script>
-    function togglePassword() {
-      const input = document.getElementById("password");
-      const icon = document.querySelector(".toggle-password");
-      if (input.type === "password") {
-        input.type = "text";
-        icon.classList.remove("fa-eye-slash");
-        icon.classList.add("fa-eye");
-      } else {
-        input.type = "password";
-        icon.classList.remove("fa-eye");
-        icon.classList.add("fa-eye-slash");
-      }
+  // 비밀번호 보기/숨기기 토글
+  function togglePassword() {
+    const input = document.getElementById("password");
+    const icon = document.querySelector(".toggle-password");
+    if (input.type === "password") {
+      input.type = "text";
+      icon.classList.remove("fa-eye-slash");
+      icon.classList.add("fa-eye");
+    } else {
+      input.type = "password";
+      icon.classList.remove("fa-eye");
+      icon.classList.add("fa-eye-slash");
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const mainLogo = document.getElementById("mainLogo");
+    if (mainLogo) {
+      mainLogo.addEventListener("click", () => {
+        window.location.href = "/";
+      });
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const mainLogo = document.getElementById("mainLogo");
-      if (mainLogo) {
-        mainLogo.addEventListener("click", () => {
-          window.location.href = "/"; // 메인페이지로 이동
-        });
-      }
+    // 로그인 처리
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  try {
+    const res = await fetch('/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({ email, password })
     });
-  </script>
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      alert('로그인 실패: ' + errorText);
+      return;
+    }
+
+    // ✅ 이제 서버가 리다이렉트 해주므로 직접 페이지 덮어쓰기 필요 없음
+    window.location.href = '/main';
+  } catch (err) {
+    alert('서버 오류가 발생했습니다.');
+    console.error(err);
+  }
+});
+
+  });
+</script>
+
+
 </body>
 </html>

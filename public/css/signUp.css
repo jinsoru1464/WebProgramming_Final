@@ -11,6 +11,8 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  padding-top: 50px; /* ✅ 상단 여백 추가 */
+  overflow-y: auto;  /* ✅ 스크롤 가능하게 */
 }
 
 .signup-container {
@@ -19,6 +21,11 @@ body {
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   width: 500px;
+  max-height: 90vh; /* ✅ 뷰포트 기준 최대 높이 제한 */
+  overflow-y: auto; /* ✅ 내용 넘치면 스크롤 */
+
+    scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
 .logo-img {
@@ -93,7 +100,7 @@ h2 {
 
 .password-field i {
   position: absolute;
-  top: 37%;
+  top: 38%;
   left: 370px;
   transform: translateY(-50%);
   color: #999;
