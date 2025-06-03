@@ -1,18 +1,25 @@
+/* 기본 설정 */
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
 body {
-  margin: 0;
   font-family: 'Pretendard', sans-serif;
+  background-color: #f4f7fa;
   font-size: 16px;
 }
 
+/* 전체 레이아웃 */
 .container {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
+  align-items: stretch;
+  overflow-x: hidden;
 }
 
+/* 사이드바 */
 .sidebar {
   width: 250px;
   background: white;
@@ -20,18 +27,12 @@ body {
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  overflow-y: none;
+  overflow-y: auto;
   scrollbar-width: none;
 }
 
 .sidebar::-webkit-scrollbar {
   display: none;
-}
-
-.main-content {
-  flex: 1;
-  padding: 2rem;
-  background-color: #f9f9f9;
 }
 
 .logo-area {
@@ -53,6 +54,7 @@ body {
 
 .menu a {
   text-decoration: none;
+  color: inherit;
 }
 
 .menu li {
@@ -106,7 +108,11 @@ body {
   line-height: 1.4;
 }
 
-/* ✅ 현재 선택된 메뉴 */
+.submenu a.active-submenu {
+  color: #2B8DB8;
+  font-weight: 600;
+}
+
 .menu li.active .menu-item {
   background-color: #f0f0f0;
   border-radius: 6px;
@@ -199,10 +205,8 @@ body {
 .stop-btn img {
   width: 20px;
   height: 20px;
-  filter: none;
 }
 
-/* ✅ 타이머 실행 중일 때 파란색 강조 */
 .timer-active .time-cell {
   background-color: #d0e8ff;
   color: #2C8FB9;
@@ -223,6 +227,11 @@ body {
 .timer-active .start-btn img,
 .timer-active .stop-btn img {
   filter: brightness(0) invert(1);
+}
+
+.timer-active .menu-item span {
+  color: #2C8FB9;
+  font-weight: 700;
 }
 
 /* 최근 학습 */
@@ -287,7 +296,7 @@ body {
   color: #444;
   font-size: 1rem;
   padding: 8px 4px;
-  width: 100%; /* ✅ 부모 영역 채우게 함 */
+  width: 100%;
   justify-content: flex-start;
 }
 
@@ -301,9 +310,95 @@ body {
   height: 20px;
 }
 
-/* 타이머 실행 중일 때 타이머 텍스트도 파란색으로 */
-.timer-active .menu-item span {
-  color: #2C8FB9;
-  font-weight: 700;
+/* 본문 영역 */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 0;
+  background-color: #f9f9f9;
+  align-items: center;
 }
+
+/* 글쓰기 박스 */
+.write-wrapper {
+  background-color: white;
+  border: 2px solid #f1f1f5;
+  border-radius: 8px;
+  padding: 40px;
+  width: 800px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.write-wrapper h2 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #2b2b2b;
+  margin-bottom: 20px;
+}
+
+.write-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.write-form label {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.write-form input[type="text"],
+.write-form textarea,
+.write-form input[type="file"] {
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  background-color: #fff;
+}
+
+.write-form textarea {
+  resize: vertical;
+  min-height: 160px;
+}
+
+input[type="file"] {
+  padding: 8px;
+  background-color: #fafafa;
+}
+
+/* 등록 버튼 */
+.submit-btn {
+  background-color: #2B8DB8;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-end;
+  transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+  background-color: #1e6d95;
+}
+
+/* placeholder 스타일 통일 */
+.write-form input::placeholder,
+.write-form textarea::placeholder {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 1rem;
+  color: #aaa;
+}
+
+.write-form input[type="text"],
+.write-form textarea {
+  font-family: 'Pretendard', sans-serif;
+}
+
 

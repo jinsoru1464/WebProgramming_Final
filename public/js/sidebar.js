@@ -1,4 +1,4 @@
-// 드롭다운 메뉴
+// 🔽 드롭다운 메뉴 토글
 document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
   toggle.addEventListener('click', () => {
     const parent = toggle.parentElement;
@@ -10,7 +10,7 @@ document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
   });
 });
 
-// 타이머 로직
+// ✅ 타이머 상태 변수
 let seconds = 0;
 let timerInterval;
 
@@ -24,6 +24,7 @@ const timerLayout = document.querySelector('.timer-layout');
 const timerMenu = document.querySelector('.timer-menu');
 const timerText = document.getElementById('timerText');
 const timerIcon = document.getElementById('timerIcon');
+const keywordInput = document.querySelector('.keyword-input');
 
 function updateTimerDisplay() {
   const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
@@ -34,10 +35,21 @@ function updateTimerDisplay() {
   secondOnes.textContent = secs[1];
 }
 
+// ▶ 타이머 시작
 startBtn?.addEventListener('click', () => {
   if (timerInterval) return;
+
+  const saved = localStorage.getItem('timerStartTime');
+  if (!saved) {
+    localStorage.setItem('timerStartTime', Date.now().toString());
+  }
+
+  const start = parseInt(localStorage.getItem('timerStartTime'), 10);
+  seconds = Math.floor((Date.now() - start) / 1000);
+  updateTimerDisplay();
+
   timerInterval = setInterval(() => {
-    seconds++;
+    seconds = Math.floor((Date.now() - start) / 1000);
     updateTimerDisplay();
   }, 1000);
 
@@ -47,16 +59,18 @@ startBtn?.addEventListener('click', () => {
   timerIcon.src = '/images/Timer_blue.png';
 });
 
+// ⏹ 타이머 정지
 stopBtn?.addEventListener('click', () => {
   clearInterval(timerInterval);
   timerInterval = null;
+  localStorage.removeItem('timerStartTime');
 
   timerLayout.classList.remove('timer-active');
   timerMenu?.classList.remove('timer-on');
   timerText.style.color = '';
   timerIcon.src = '/images/Timer.png';
 
-  const keyword = document.querySelector('.keyword-input').value.trim();
+  const keyword = keywordInput.value.trim();
   if (!keyword) return;
 
   const minutes = Math.floor(seconds / 60);
@@ -75,34 +89,45 @@ stopBtn?.addEventListener('click', () => {
   }
   recentGraph.appendChild(block);
 
-  const token = localStorage.getItem('token');
   fetch('/api/timer', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Content-Type': 'application/json'
     },
+    credentials: 'include',  // ✅ 쿠키 기반 인증
     body: JSON.stringify({ keyword, seconds })
   })
     .then(res => res.json())
     .then(data => console.log('✅ 타이머 기록 저장 완료:', data))
     .catch(err => console.error('❌ 타이머 저장 실패:', err));
 
-  document.querySelector('.keyword-input').value = '';
+  keywordInput.value = '';
   seconds = 0;
   updateTimerDisplay();
 });
 
-// 최근 학습 불러오기
+// 🌱 최근 학습 + 타이머 복원
 document.addEventListener('DOMContentLoaded', () => {
-  const token = localStorage.getItem('token');
-  if (!token) return;
+  const savedStartTime = localStorage.getItem('timerStartTime');
+  if (savedStartTime) {
+    const start = parseInt(savedStartTime, 10);
+    seconds = Math.floor((Date.now() - start) / 1000);
+    updateTimerDisplay();
+
+    timerInterval = setInterval(() => {
+      seconds = Math.floor((Date.now() - start) / 1000);
+      updateTimerDisplay();
+    }, 1000);
+
+    timerLayout.classList.add('timer-active');
+    timerMenu?.classList.add('timer-on');
+    timerText.style.color = '#2C8FB9';
+    timerIcon.src = '/images/Timer_blue.png';
+  }
 
   fetch('/api/timer/recent', {
     method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
+    credentials: 'include'  // ✅ 쿠키 포함
   })
     .then(res => res.json())
     .then(data => {
@@ -110,21 +135,19 @@ document.addEventListener('DOMContentLoaded', () => {
       data.reverse().forEach(({ keyword, duration_seconds }) => {
         const block = document.createElement('div');
         block.className = 'block';
-
         const minutes = Math.floor(duration_seconds / 60);
         const seconds = duration_seconds % 60;
         block.title = `${keyword} - ${minutes}분 ${seconds}초`;
-
         const shade = Math.min(255, 150 + duration_seconds);
         block.style.backgroundColor = `rgb(${255 - shade}, ${255}, ${255 - shade})`;
-
         recentGraph.appendChild(block);
       });
     })
     .catch(err => console.error('❌ 최근 학습 불러오기 실패', err));
 });
 
-// 로그아웃
+// 🚪 로그아웃 (타이머만 초기화)
 document.querySelector('.logout-btn')?.addEventListener('click', () => {
-  window.location.href = "/login";
+  localStorage.removeItem('timerStartTime');  // ✅ 타이머만 삭제
+  window.location.href = "/logout";           // 서버에서 쿠키 삭제
 });
