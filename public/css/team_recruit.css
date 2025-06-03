@@ -1,0 +1,190 @@
+/* 기본 설정 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Pretendard', sans-serif;
+  background-color: #f4f7fa;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+}
+
+/* 전체 레이아웃 */
+.container {
+  display: flex;
+  min-height: 100vh;
+  align-items: stretch;
+  overflow-x: hidden;
+}
+
+
+
+/* 모집 게시판 */
+.recruit-wrapper {
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+}
+
+.recruit-header-box {
+  border: 2px solid #f1f1f5;
+  background-color: white;
+  padding: 30px 40px;
+  margin: 0px auto 12px auto;
+  width: 1200px;
+}
+
+.recruit-list-box {
+  border: 2px solid #f1f1f5;
+  background-color: white;
+  padding: 30px 40px;
+  margin: 0 auto 0px auto;
+  width: 1200px;
+}
+
+
+.recruit-header-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #2b2b2b;
+  margin-bottom: 10px;
+}
+
+.recruit-subtitle {
+  font-size: 16px;
+  color: #666;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 20px auto;
+}
+
+.button-wrapper-inbox {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.write-btn {
+  background-color: #2B8DB8;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s;
+  text-decoration: none;
+}
+
+.write-btn:hover {
+  background-color: #1e6d95;
+}
+
+.recruit-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recruit-list li {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding: 16px 0;
+}
+
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 16px;
+}
+
+.post-content {
+  flex: 1;
+}
+
+.post-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.post-meta {
+  font-size: 13px;
+  color: #888;
+}
+
+.author {
+  font-weight: 600;
+  color: #2B8DB8;
+  background-color: #eef4ff;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-right: 6px;
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  gap: 8px;
+}
+
+.page-btn {
+  padding: 6px 12px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.page-btn.active {
+  background-color: #2B8DB8;
+  color: white;
+  border-color: #2B8DB8;
+}
+
+.page-btn:hover {
+  background-color: #2B8DB8;
+  color: white;
+  border-color: #2B8DB8;
+}
+
+.page-btn i {
+  color: #2B8DB8;
+}
+
+.page-btn:hover i {
+  color: white;
+}
+
+.recruit-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.recruit-link:hover .post-title {
+  text-decoration: underline; /* 원하는 경우에만 hover 시 밑줄 */
+}
+
