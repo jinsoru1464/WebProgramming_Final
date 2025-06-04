@@ -300,6 +300,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   console.log('🛠 [DEV] 서버 실행 중...');
 }
-app.listen(PORT, () => {
-  console.log(`✅ 서버 실행됨: http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`✅ 서버 실행됨: http://0.0.0.0:${PORT}`);
 });
+
