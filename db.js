@@ -1,8 +1,10 @@
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv');
+dotenv.config({ path: '.env.production' }); //로컬에서 돌릴거면 <- 이거 주석 처리리
 
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
 dotenv.config({ path: envFile });
+
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
