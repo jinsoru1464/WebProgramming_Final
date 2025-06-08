@@ -1,0 +1,193 @@
+/* 공통 초기화 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Pretendard', sans-serif;
+    background-color: #f4f7fa;
+}
+
+/* 전체 레이아웃 */
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* 왼쪽 사이드바 */
+.sidebar {
+    width: 240px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 0;
+    border-right: 1px solid #ccc;
+    position: relative;
+}
+
+.logo-area {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.logo {
+    width: 180px;
+    margin-bottom: 10px;
+}
+
+/* 버튼 스타일 */
+.btn {
+    width: 160px;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.login {
+    background-color: #4a90e2;
+    color: white;
+}
+
+.signup {
+    background-color: #888;
+    color: white;
+}
+
+/* 메인 콘텐츠 영역 */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: white;
+    padding: 60px;
+    margin-left: 10px;
+    width: 800px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 텍스트와 로고 수평 정렬 (홈 화면 용) */
+.intro-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 80px;
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+.intro-text h1 {
+    color: #2b76ba;
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.intro-text p {
+    font-size: 24px;
+    color: #555;
+}
+
+.main-logo img {
+    width: 400px;
+}
+
+/* 메인 버튼 영역 (홈 화면 용) */
+
+.title-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+}
+.page-title {
+    text-align: left;
+    font-size: 50px;
+    font-weight: 800;
+    color: #8E8E93;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+    font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+}
+
+.divider {
+    height: 11px;
+    background-color: #2C8FB9; /* 메뉴 테두리 색과 일치 */
+    border: none;
+    margin: 0 auto 2rem auto;
+    width: 100%;
+}
+
+.buttons {
+    display: flex;
+    gap: 80px;
+}
+
+.main-btn {
+    background-color: #4a90e2;
+    color: white;
+    padding: 22px 30px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: none;
+}
+
+/* 🎯 글쓰기 폼 전용 스타일 */
+.write-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 800px;
+    gap: 1rem;
+}
+
+.write-form label {
+    font-weight: bold;
+    margin-top: 1rem;
+    color: #333;
+}
+
+.write-form input[type="text"],
+.write-form select,
+.write-form textarea,
+.write-form input[type="file"] {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: 'Pretendard', sans-serif;
+    background-color: #fff;
+}
+
+.write-form textarea {
+    resize: vertical;
+}
+
+.write-btn {
+    background-color: #2C8FB9;
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    align-self: flex-end; /* 버튼을 오른쪽 아래로 정렬 */
+}
+
+.write-btn:hover {
+    background-color: #1b6fa8;
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+

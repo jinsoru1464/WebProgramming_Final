@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../css/write.css" />
+    <title>글쓰기 - 공공재 커뮤니티</title>
+</head>
+<body>
+<div class="container">
+    <aside class="sidebar">
+        <div class="logo-area">
+            <img src="../reallogo 1.png" alt="공공재 로고" class="logo" />
+        </div>
+        <button class="btn login">로그인</button>
+        <button class="btn signup">회원가입</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="title-wrapper">
+            <h1 class="page-title"><strong>Content</strong></h1>
+        </header>
+
+        <div class="divider">
+            <hr/>
+        </div>
+
+        <form class="write-form" action="/posts" method="POST">
+            <label for="title">제목</label>
+            <input type="text" id="title" name="title" placeholder="제목을 입력하세요" required />
+
+            <label for="category">카테고리</label>
+            <select id="category" name="category" required>
+                <option value="">선택하세요</option>
+                <option value="스터디원 모집">#스터디원 모집</option>
+                <option value="Q&A">#Q&A</option>
+                <option value="공모전 후기">#공모전 후기</option>
+            </select>
+
+            <label for="content">내용</label>
+            <textarea id="content" name="content" rows="10" placeholder="내용을 입력하세요" required></textarea>
+
+            <label for="image">이미지 업로드</label>
+            <input type="file" id="image" name="image" accept="image/*" />
+
+            <button type="submit" class="write-btn">
+                작성하기
+            </button>
+        </form>
+    </main>
+</div>
+</body>
+</html>
