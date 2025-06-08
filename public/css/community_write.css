@@ -10,7 +10,7 @@ body {
     background-color: #f4f7fa;
 }
 
-/* 전체 레이아웃 */
+/* 전체 레이아웃*/
 .container {
     display: flex;
     min-height: 100vh;

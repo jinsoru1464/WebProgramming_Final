@@ -25,7 +25,7 @@ document.addEventListener("click", function (e) {
     }
 });
 
-//이미지가 없는 경우
+//이미지 없는 경우
 document.addEventListener("DOMContentLoaded", function () {
     const cards = document.querySelectorAll(".card-img-top");
 
