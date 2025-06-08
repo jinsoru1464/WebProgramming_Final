@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="public/css/community.css" />
+    <script defer src="public/js/community.js"></script>
+    <title>community-review</title>
+</head>
+<body>
+<div class="container">
+    <aside class="sidebar">
+        <div class="logo-area">
+            <!-- 이미지 경로 수정-->
+            <img
+                    src="public/images/reallogo 1.png"
+                    alt="공공재 로고"
+                    class="logo"
+                    id="mainLogo"
+            />
+        </div>
+        <button class="btn login" id="loginBtn">로그인</button>
+        <button class="btn signup" id="signUpBtn">회원가입</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="title-wrapper">
+            <h1 class="page-title"><strong>Community</strong></h1>
+        </header>
+
+        <div class="divider">
+            <hr class="divider" />
+        </div>
+
+        <div class="card-container">
+            <% posts.forEach(function(post) { %>
+                <div class="card" onclick="location.href='/posts/<%= post._id %>'">
+                    <img src="..." class="card-img-top" alt="..." />
+                    <div class="card-tag-placeholder">#스터디원 모집</div>
+                    <div class="card-body">
+                        <div class="card-header">
+                            <h5 class="card-title"><%= post.title %></h5>
+                            <div class="card-tags">
+                                <span class="tag">#<%= post.category %></span>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= post.content.replace(/\r?\n|\r/g, ' ') %></p>
+                        <div class="card-meta">
+                            <span class="card-date"><%= post.createdAt.toISOString().slice(0,10) %></span>
+                            <span class="card-author">작성자: <%= post.author %></span>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+
+        <div class="pagination">
+            <% if (currentPage > 1) { %>
+                <a href="/?page=<%= currentPage - 1 %>" class="page-arrow">&laquo;</a>
+            <% } else { %>
+                <span class="page-arrow disabled">&laquo;</span>
+            <% } %>
+
+            <% for (let i = 1; i <= totalPages; i++) { %>
+                <a href="/?page=<%= i %>" class="page-num <%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+            <% } %>
+
+            <% if (currentPage < totalPages) { %>
+                <a href="/?page=<%= currentPage + 1 %>" class="page-arrow">&raquo;</a>
+            <% } else { %>
+                <span class="page-arrow disabled">&raquo;</span>
+            <% } %>
+        </div>
+
+        <div class="button-floating">
+            <button
+                    class="floating-btn menu-btn"
+                    data-title="Contet Member Recruitment"
+            >
+                스터디원 모집
+            </button>
+            <button class="floating-btn menu-btn" data-title="Q&A">Q&A</button>
+            <button class="floating-btn menu-btn" data-title="Contet Review">
+                공모전 후기
+            </button>
+            <a href="/write" class="write-btn">글쓰기</a>
+        </div>
+    </main>
+</div>
+
+<footer>
+    <p style="text-align: right">&copy; 2025 공공재 커뮤니티</p>
+</footer>
+</body>
+</html>
