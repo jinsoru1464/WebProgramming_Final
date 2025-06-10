@@ -765,25 +765,38 @@ const [keywordRows] = await db.execute(
 });
 
 // ✅ 포트폴리오 저장 처리
+// ✅ 저장 처리
 app.post('/savePortfolio', upload.single('profileImage'), authenticateToken, async (req, res) => {
   const userId = req.user.id;
   const { about, skills, projects } = req.body;
 
   try {
-    // 기존 포트폴리오 불러오기
     const [portfolioResult] = await db.execute('SELECT * FROM portfolio WHERE user_id = ?', [userId]);
     const portfolio = portfolioResult[0] || {};
 
-    // 새 이미지가 없으면 기존 이미지 유지
-    const profileImage = req.file ? req.file.filename : portfolio.profile_image;
+    let profileImage;
+    if (req.file) {
+      profileImage = req.file.filename;
+    } else if (portfolio.profile_image && portfolio.profile_image !== 'default.png') {
+      profileImage = portfolio.profile_image;
+    } else {
+      profileImage = 'default.png';
+    }
 
-    // 포트폴리오 업데이트 (업데이트할 row가 없으면 INSERT 대신 이 로직 유지)
-    await db.execute(
+    // ✅ UPSERT
+    const [result] = await db.execute(
       `UPDATE portfolio SET about = ?, profile_image = ? WHERE user_id = ?`,
       [about, profileImage, userId]
     );
 
-    // 기존 스킬/프로젝트 삭제 후 새로 삽입
+    if (result.affectedRows === 0) {
+      await db.execute(
+        `INSERT INTO portfolio (user_id, about, profile_image) VALUES (?, ?, ?)`,
+        [userId, about, profileImage]
+      );
+    }
+
+    // ✅ 스킬/프로젝트 재삽입
     await db.execute('DELETE FROM user_skills WHERE user_id = ?', [userId]);
     await db.execute('DELETE FROM user_projects WHERE user_id = ?', [userId]);
 
@@ -809,12 +822,6 @@ app.post('/savePortfolio', upload.single('profileImage'), authenticateToken, asy
     res.status(500).json({ success: false, message: '서버 오류' });
   }
 });
-
-
-
-
-
-
 
 
 
