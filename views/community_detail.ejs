@@ -1,15 +1,14 @@
-<!-- views/team_recruit_edit.ejs -->
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>게시글 수정</title>
-  <link rel="stylesheet" href="/css/team_recruit_write.css">
-</head>
-<body>
-  <div class="container">
-    <!-- ✅ 사이드바 -->
-    <aside class="sidebar">
+  <head>
+    <meta charset="UTF-8" />
+    <title>글 상세보기 - 공공재 커뮤니티</title>
+    <link rel="stylesheet" href="../css/community_detail.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- ✅ 사이드바 -->
+      <aside class="sidebar">
       <div class="logo-area">
         <a href="/main">
           <img src="/images/reallogo 1.png" alt="공공재 로고" class="logo" />
@@ -19,15 +18,13 @@
       <nav>
         <ul class="menu">
           <li class="<%= currentPath === '/main' || currentPath === '/' ? 'active' : '' %>">
-            <a href="/main" class="menu-item">
-              <div class="left">
-                <img src="/images/<%= currentPath === '/main' || currentPath === '/' ? 'Home_Blue.png' : 'Home.png' %>" class="icon" alt="홈" />
-                <span>홈</span>
-              </div>
-            </a>
-          </li>
-
-          <!-- 공모전 페이지 -->
+  <a href="/main" class="menu-item">
+    <div class="left">
+      <img src="/images/<%= currentPath === '/main' || currentPath === '/' ? 'Home_Blue.png' : 'Home.png' %>" class="icon" alt="홈" />
+      <span>홈</span>
+    </div>
+  </a>
+</li>
           <li class="dropdown <%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'active' : '' %>">
             <div class="menu-item dropdown-toggle">
               <div class="left">
@@ -42,7 +39,6 @@
             </ul>
           </li>
 
-
           <li>
   <a href="/portfolio/<%= user.id %>" class="menu-item">
     <div class="left">
@@ -51,8 +47,8 @@
     </div>
   </a>
 </li>
-
-          <li class="dropdown <%= currentPath.startsWith('/community') ? 'active' : '' %>">
+          <!-- 커뮤니티 메뉴 -->
+<li class="dropdown <%= currentPath.startsWith('/community') ? 'active' : '' %>">
   <div class="menu-item dropdown-toggle">
     <div class="left">
       <img src="/images/<%= currentPath.startsWith('/community') ? 'Group_blue.png' : 'Group_human.png' %>" class="icon" alt="커뮤니티" />
@@ -83,6 +79,7 @@
   </li>
 </ul>
 
+</li>
           <li class="timer-menu">
             <div class="menu-item">
               <div class="left">
@@ -93,6 +90,11 @@
 
             <div class="timer-layout">
               <div class="timer-blocks">
+                <div class="time-group">
+                  <div class="time-cell" id="hourTens">0</div>
+                  <div class="time-cell" id="hourOnes">0</div>
+                </div>
+                <div class="colon">:</div>
                 <div class="time-group">
                   <div class="time-cell" id="minuteTens">0</div>
                   <div class="time-cell" id="minuteOnes">0</div>
@@ -122,31 +124,56 @@
       </div>
 
       <div class="logout-section">
-        <button class="logout-btn" onclick="location.href='/logout'">
+        <button class="logout-btn" aria-label="로그아웃">
           <img src="/images/logOut.png" class="logout-icon" />
           로그아웃
         </button>
       </div>
-    </aside>
+    </aside> 
 
-    <div class="main-content">
-      <div class="write-wrapper">
-        <h2>게시글 수정</h2>
-        <form class="write-form" method="POST" action="/recruit/<%= post.id %>/edit" enctype="multipart/form-data">
-          <label for="title">제목</label>
-          <input type="text" name="title" id="title" value="<%= post.title %>" required />
+      <!-- 메인 콘텐츠 -->
+      <main class="main-content">
+        <header class="title-wrapper">
+          <h1 class="page-title"><strong><%= pageTitle %></strong></h1>
+        </header>
 
-          <label for="content">내용</label>
-          <textarea name="content" id="content" required><%= post.content %></textarea>
+        <div class="divider"></div>
 
-          <label for="thumbnail">썸네일 이미지 (선택)</label>
-          <input type="file" name="thumbnail" id="thumbnail" accept="image/*" />
+        <section class="post-detail">
+          <h2 class="post-title"><%= post.title %></h2>
+          <div class="post-meta">
+            <span class="category">#<%= post.category %></span>
+            <span class="author">작성자: <%= post.author %></span>
+            <span class="date"><%= new Date(post.created_at).toISOString().slice(0,10) %></span>
+          </div>
 
-          <button type="submit" class="submit-btn">수정 완료</button>
-        </form>
-      </div>
-    </div>
+          <% if (post.image) { %>
+          <div class="post-image">
+            <img src="<%= post.image %>" alt="첨부 이미지" style="max-width: 100%; height: auto; margin: 10px 0" />
+          </div>
+          <% } %>
+
+          <div class="post-content">
+            <p><%= post.content %></p>
+          </div>
+        </section>
+
+        
+
+<% if (post.user_id === user.id) { %>
+  <div class="post-actions">
+    <a href="/community/<%= post.id %>/edit" class="edit-btn">수정</a>
+
+    <form action="/community/<%= post.id %>?_method=DELETE" method="POST" onsubmit="return confirm('정말 삭제하시겠습니까?')" style="display:inline;">
+      <button type="submit" class="delete-btn">삭제</button>
+    </form>
   </div>
-  <script src="/js/sidebar.js"></script>
-</body>
+<% } %>
+
+
+      </main>
+    </div>
+
+    <script src="/js/sidebar.js"></script>
+  </body>
 </html>

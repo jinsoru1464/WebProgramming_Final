@@ -27,13 +27,18 @@ const timerIcon = document.getElementById('timerIcon');
 const keywordInput = document.querySelector('.keyword-input');
 
 function updateTimerDisplay() {
-  const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+  const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
+  const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
   const secs = String(seconds % 60).padStart(2, '0');
-  minuteTens.textContent = mins[0];
-  minuteOnes.textContent = mins[1];
-  secondTens.textContent = secs[0];
-  secondOnes.textContent = secs[1];
+
+  document.getElementById('hourTens').textContent = hrs[0];
+  document.getElementById('hourOnes').textContent = hrs[1];
+  document.getElementById('minuteTens').textContent = mins[0];
+  document.getElementById('minuteOnes').textContent = mins[1];
+  document.getElementById('secondTens').textContent = secs[0];
+  document.getElementById('secondOnes').textContent = secs[1];
 }
+
 
 // ▶ 타이머 시작
 startBtn?.addEventListener('click', () => {
@@ -81,8 +86,11 @@ stopBtn?.addEventListener('click', () => {
   const block = document.createElement('div');
   block.className = 'block';
   block.title = `${keyword} - ${displayTime}`;
-  const shade = Math.min(255, 150 + seconds);
-  block.style.backgroundColor = `rgb(${255 - shade}, ${255}, ${255 - shade})`;
+  const ratio = Math.min(1, seconds / 3600);
+const shade = Math.floor(150 + 105 * ratio);  // 동일한 방식
+
+block.style.backgroundColor = `rgb(${255 - shade}, 255, ${255 - shade})`;
+
 
   if (recentGraph.children.length >= 5) {
     recentGraph.removeChild(recentGraph.children[0]);
@@ -138,8 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const minutes = Math.floor(duration_seconds / 60);
         const seconds = duration_seconds % 60;
         block.title = `${keyword} - ${minutes}분 ${seconds}초`;
-        const shade = Math.min(255, 150 + duration_seconds);
-        block.style.backgroundColor = `rgb(${255 - shade}, ${255}, ${255 - shade})`;
+        // 최대 1시간 = 3600초 기준으로 비율 계산
+        const ratio = Math.min(1, seconds / 3600);
+        const shade = Math.floor(150 + 105 * ratio);  // 150~255 사이
+
+        block.style.backgroundColor = `rgb(${255 - shade}, 255, ${255 - shade})`;
+
         recentGraph.appendChild(block);
       });
     })
@@ -151,3 +163,6 @@ document.querySelector('.logout-btn')?.addEventListener('click', () => {
   localStorage.removeItem('timerStartTime');  // ✅ 타이머만 삭제
   window.location.href = "/logout";           // 서버에서 쿠키 삭제
 });
+
+
+

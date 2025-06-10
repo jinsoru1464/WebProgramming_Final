@@ -78,18 +78,24 @@
               </div>
             </div>
 
-            <div class="timer-layout">
-              <div class="timer-blocks">
-                <div class="time-group">
-                  <div class="time-cell" id="minuteTens">0</div>
-                  <div class="time-cell" id="minuteOnes">0</div>
-                </div>
-                <div class="colon">:</div>
-                <div class="time-group">
-                  <div class="time-cell" id="secondTens">0</div>
-                  <div class="time-cell" id="secondOnes">0</div>
-                </div>
-              </div>
+            <!-- ✅ 변경 후 타이머 구조 -->
+<div class="timer-blocks">
+  <div class="time-group">
+    <div class="time-cell" id="hourTens">0</div>
+    <div class="time-cell" id="hourOnes">0</div>
+  </div>
+  <div class="colon">:</div>
+  <div class="time-group">
+    <div class="time-cell" id="minuteTens">0</div>
+    <div class="time-cell" id="minuteOnes">0</div>
+  </div>
+  <div class="colon">:</div>
+  <div class="time-group">
+    <div class="time-cell" id="secondTens">0</div>
+    <div class="time-cell" id="secondOnes">0</div>
+  </div>
+</div>
+
 
               <div class="timer-controls">
                 <input type="text" class="keyword-input" placeholder="키워드" />
@@ -149,13 +155,18 @@
     const timerIcon = document.getElementById('timerIcon');
 
     function updateTimerDisplay() {
-      const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
-      const secs = String(seconds % 60).padStart(2, '0');
-      minuteTens.textContent = mins[0];
-      minuteOnes.textContent = mins[1];
-      secondTens.textContent = secs[0];
-      secondOnes.textContent = secs[1];
-    }
+  const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
+  const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+  const secs = String(seconds % 60).padStart(2, '0');
+
+  document.getElementById('hourTens').textContent = hrs[0];
+  document.getElementById('hourOnes').textContent = hrs[1];
+  document.getElementById('minuteTens').textContent = mins[0];
+  document.getElementById('minuteOnes').textContent = mins[1];
+  document.getElementById('secondTens').textContent = secs[0];
+  document.getElementById('secondOnes').textContent = secs[1];
+}
+
 
     startBtn.addEventListener('click', () => {
       if (timerInterval) return;

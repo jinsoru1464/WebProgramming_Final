@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>공공재 메인페이지</title>
+  <!-- ✅ CSS 경로 수정 -->
+  <!-- <link rel="stylesheet" href="/css/main(LogX).css"> -->
+  <link rel="stylesheet" href="/css/portfolio.css">
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo-area">
+        <a href="/main">
+          <img src="/images/reallogo 1.png" alt="공공재 로고" class="logo" />
+        </a>
+      </div>
+
+      <nav>
+        <ul class="menu">
+          <li class="<%= currentPath === '/main' || currentPath === '/' ? 'active' : '' %>">
+            <a href="/main" class="menu-item">
+              <div class="left">
+                <img src="/images/<%= currentPath === '/main' || currentPath === '/' ? 'Home_Blue.png' : 'Home.png' %>" class="icon" alt="홈" />
+                <span>홈</span>
+              </div>
+            </a>
+          </li>
+
+          <!-- 공모전 페이지 -->
+          <li class="dropdown <%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'active' : '' %>">
+            <div class="menu-item dropdown-toggle">
+              <div class="left">
+                <img src="/images/<%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'Trophy_blue.png' : 'Trophy.png' %>" class="icon" alt="공모전" />
+                <span class="<%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'submenu-highlight' : '' %>">공모전 페이지</span>
+              </div>
+              <img src="/images/toggle.png" class="arrow-icon" />
+            </div>
+            <ul class="submenu">
+              <li><a href="/contest" class="<%= currentPath === '/contest' ? 'active-submenu' : '' %>">공모전 정보</a></li>
+              <li><a href="/recruit" class="<%= currentPath === '/recruit' ? 'active-submenu' : '' %>">공모전 팀원 모집</a></li>
+            </ul>
+          </li>
+
+          <li class="<%= currentPath.startsWith('/portfolio') ? 'active' : '' %>">
+  <a href="/portfolio/<%= user.id %>" class="menu-item">
+    <div class="left">
+      <img src="/images/<%= currentPath.startsWith('/portfolio') ? 'human_blue.png' : 'human.png' %>" class="icon" alt="포트폴리오" />
+      <span class="<%= currentPath.startsWith('/portfolio') ? 'submenu-highlight' : '' %>">나의 포트폴리오</span>
+    </div>
+  </a>
+</li>
+
+
+
+          <li class="dropdown <%= currentPath.startsWith('/community') ? 'active' : '' %>">
+  <div class="menu-item dropdown-toggle">
+    <div class="left">
+      <img src="/images/<%= currentPath.startsWith('/community') ? 'Group_blue.png' : 'Group_human.png' %>" class="icon" alt="커뮤니티" />
+      <span class="<%= currentPath.startsWith('/community') ? 'submenu-highlight' : '' %>">커뮤니티</span>
+    </div>
+    <img src="/images/toggle.png" class="arrow-icon" />
+  </div>
+  <ul class="submenu">
+  <li>
+    <a href="/community" class="<%= decodeURIComponent(currentPath) === '/community' ? 'active-submenu' : '' %>">
+      커뮤니티
+    </a>
+  </li>
+  <li>
+    <a href="/community?category=스터디원 모집" class="<%= decodeURIComponent(currentPath).includes('스터디원 모집') ? 'active-submenu' : '' %>">
+      스터디원 모집
+    </a>
+  </li>
+  <li>
+    <a href="/community?category=Q%26A" class="<%= decodeURIComponent(currentPath).includes('Q&A') ? 'active-submenu' : '' %>">
+      Q&A
+    </a>
+  </li>
+  <li>
+    <a href="/community?category=공모전 후기" class="<%= decodeURIComponent(currentPath).includes('공모전 후기') ? 'active-submenu' : '' %>">
+      공모전 후기
+    </a>
+  </li>
+</ul>
+          </li>
+
+          <li class="timer-menu">
+            <div class="menu-item">
+              <div class="left">
+                <img id="timerIcon" src="/images/Timer.png" class="icon" alt="타이머" />
+                <span id="timerText">타이머</span>
+              </div>
+            </div>
+
+            <div class="timer-layout">
+              <div class="timer-blocks">
+                <div class="time-group">
+                  <div class="time-cell" id="hourTens">0</div>
+                  <div class="time-cell" id="hourOnes">0</div>
+                </div>
+                <div class="colon">:</div>
+                <div class="time-group">
+                  <div class="time-cell" id="minuteTens">0</div>
+                  <div class="time-cell" id="minuteOnes">0</div>
+                </div>
+                <div class="colon">:</div>
+                <div class="time-group">
+                  <div class="time-cell" id="secondTens">0</div>
+                  <div class="time-cell" id="secondOnes">0</div>
+                </div>
+              </div>
+
+              <div class="timer-controls">
+                <input type="text" class="keyword-input" placeholder="키워드" />
+                <div class="timer-buttons">
+                  <button class="start-btn"><img src="/images/Play.png" alt="시작" /></button>
+                  <button class="stop-btn"><img src="/images/Stop circle.png" alt="정지" /></button>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="recent-section">
+        <div class="recent-title">최근 학습</div>
+        <div class="recent-graph" id="recentGraph"></div>
+      </div>
+
+      <div class="logout-section">
+        <button class="logout-btn" onclick="location.href='/logout'">
+          <img src="/images/logOut.png" class="logout-icon" />
+          로그아웃
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="portfolio-header">
+        <div class="inner-container">
+          <h1>Portfolio</h1>
+        </div>
+      </div>
+
+      <div class="portfolio-body">
+        <div class="user-info">
+          <div class="user-text">
+            <p class="name-input" type="text"><%= user.name %></p>
+            <div class="about-box">
+              <p class="about-title">about me</p>
+              <div class="about-textarea">
+                <p><%= about %></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="user-photo-skill">
+            <div class="photo-box">
+              <% if (profileImage) { %>
+                <img id="profilePreview" src="/uploads/<%= profileImage %>" alt="프로필 이미지" />
+              <% } else { %>
+                <img id="profilePreview" src="/images/default-profile.png" alt="기본 이미지" />
+              <% } %>
+            </div>
+
+            <div class="skills-section">
+              <div class="skills" id="skillList">
+                <% if (skills && skills.length > 0) { %>
+                  <% skills.forEach(skill => { %>
+                    <div class="skill-button" style="background-color: <%= skill.color || '#999999' %>;">
+                      <p class="skill-input"><%= skill.name %></p>
+                    </div>
+                  <% }) %>
+                <% } else { %>
+                  <p>스킬이 없습니다.</p>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <section class="study-record">
+          <h3>공부 기록</h3>
+          <p id="studyDays">현재 0일</p>
+
+
+        
+          <div class="study-graph-area">
+            <!-- 좌측 요일 -->
+            <div class="weekdays">
+              <div>SUN</div>
+              <div>MON</div>
+              <div>TUE</div>
+              <div>WED</div>
+              <div>THU</div>
+              <div>FRI</div>
+              <div>SAT</div>
+            </div>
+        
+            <!-- 우측 달력 스크롤 영역 -->
+<div class="calendar-scroll">
+  <div class="calendar-track" id="calendarTrack">
+    <!-- JS에서 생성할 예정 -->
+  </div>
+</div>
+
+        
+            <!-- 우측 원형 요약 -->
+            <div class="summary-circle">
+  <canvas id="keywordPieChart" width="150" height="150"></canvas>
+  <ul id="keywordLegend" style="margin-top: 10px;"></ul>
+</div>
+
+          </div>
+        </section>
+        
+      
+        <section class="project-add-section">
+          <!-- 추가될 카드들이 들어가는 영역 -->
+          <div id="project-card-container">
+            <% if (projects && projects.length > 0) { %>
+              <% projects.forEach(function(project) { %>
+                <div class="project-added-card show">
+                  <div class="project-label">
+                    <input type="text" class="project-title-input" value="<%= project.title %>" readonly />
+                  </div>
+                  <hr class="project-divider" />
+                  <div class="project-detail">
+                    <textarea class="project-description" readonly><%= project.description %></textarea>
+                  </div>
+                </div>
+              <% }); %>
+            <% } else { %>
+              <p>프로젝트가 없습니다.</p>
+            <% } %>
+          </div>
+        </section>
+        
+        <!-- 수정 완료 버튼 -->
+        <div style="text-align: right; margin: 0 0;">
+            <button class="btn edit" id="editBtn">수정하기</button>
+        </div>
+        
+      </div>
+      
+    </main>
+  </div>
+  <!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<script>
+  const studyData = <%- JSON.stringify(daily_study_summary || []) %>;
+  const keywordData = <%- JSON.stringify(keyword_study_summary || []) %>;
+
+  const calendarTrack = document.getElementById("calendarTrack");
+
+  const formatDate = (date) => {
+    const offset = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - offset).toISOString().split("T")[0];
+  };
+
+  const getColor = (seconds) => {
+    if (seconds >= 7200) return '#216e39';
+    if (seconds >= 3600) return '#4caf50';
+    if (seconds >= 1800) return '#a1d99b';
+    if (seconds > 0) return '#d9f0d3';
+    return '#eee';
+  };
+
+  const dataMap = {};
+  studyData.forEach(({ study_date, total_seconds }) => {
+    const key = new Date(study_date).toISOString().split("T")[0];
+    dataMap[key] = total_seconds;
+  });
+
+  const today = new Date();
+  const days = 84;
+  let currentColumn = null;
+
+  for (let i = 0; i < days; i++) {
+    const date = new Date();
+    date.setDate(today.getDate() - (days - 1 - i));
+    const dayOfWeek = date.getDay();
+    const dateStr = formatDate(date);
+    const seconds = dataMap[dateStr] || 0;
+    const color = getColor(seconds);
+
+    const dayCell = document.createElement("div");
+    dayCell.className = "day-cell";
+    dayCell.style.backgroundColor = color;
+    dayCell.title = `${dateStr} / ${Math.floor(seconds / 60)}분`;
+
+    if (dayOfWeek === 0 || i === 0) {
+      currentColumn = document.createElement("div");
+      currentColumn.className = "calendar-column";
+      calendarTrack.appendChild(currentColumn);
+    }
+    if (currentColumn) currentColumn.appendChild(dayCell);
+  }
+
+  // ✅ 공부 일수 표시
+  const studyDaysCount = studyData.filter(d => d.total_seconds > 0).length;
+  document.getElementById('studyDays').innerText = `현재 ${studyDaysCount}일`;
+
+  // ✅ Chart.js 도넛 차트 한 번만 생성
+  const ctx = document.getElementById("keywordPieChart").getContext("2d");
+
+const labels = keywordData.map(item => item.keyword);
+const data = keywordData.map(item => item.total_seconds);
+const totalSeconds = data.reduce((a, b) => a + b, 0);
+const backgroundColors = ['#ffc107', '#f28b82', '#a7ffeb', '#d7aefb', '#ccff90'];
+
+new Chart(ctx, {
+  type: 'pie',
+  data: {
+    labels,
+    datasets: [{
+      data,
+      backgroundColor: backgroundColors,
+      borderColor: '#fff',
+      borderWidth: 2,
+    }]
+  },
+  options: {
+    responsive: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (context) => {
+            const value = context.parsed;
+            const percentage = ((value / totalSeconds) * 100).toFixed(1);
+            return `${context.label}: ${percentage}%`;
+          }
+        }
+      },
+      datalabels: {
+        color: '#333',
+        font: {
+          size: 14,
+          weight: 'bold'
+        },
+        formatter: (value, context) => {
+          const label = context.chart.data.labels[context.dataIndex];
+          const percentage = ((value / totalSeconds) * 100).toFixed(1);
+          return `${label}\n${percentage}%`;
+        }
+      }
+    }
+  },
+  plugins: [ChartDataLabels]
+});
+
+</script>
+
+
+
+
+  <script src="/js/sidebar.js"></script>
+  <script>
+    
+  document.getElementById('editBtn').addEventListener('click', () => {
+    window.location.href = '/editPortfolio';
+  });
+
+</script>
+
+</body>
+</html>

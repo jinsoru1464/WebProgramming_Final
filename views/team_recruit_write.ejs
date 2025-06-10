@@ -6,6 +6,7 @@
   <title>팀원 모집 글쓰기</title>
 
   <link rel="stylesheet" href="/css/team_recruit_write.css" />
+  <link rel="icon" href="/images/reallogo 1.png" type="image/png" />
 </head>
 <body>
   <div class="container">
@@ -30,43 +31,59 @@
 
           <!-- 공모전 페이지 -->
           <li class="dropdown <%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'active' : '' %>">
-  <div class="menu-item dropdown-toggle">
-    <div class="left">
-      <img src="/images/<%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'Trophy_blue.png' : 'Trophy.png' %>" class="icon" alt="공모전" />
-      <span class="<%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'submenu-highlight' : '' %>">공모전 페이지</span>
-    </div>
-    <img src="/images/toggle.png" class="arrow-icon" />
-  </div>
-  <ul class="submenu">
-    <li><a href="/contest" class="<%= currentPath === '/contest' ? 'active-submenu' : '' %>">공모전 정보</a></li>
-    <li><a href="/recruit" class="<%= currentPath.startsWith('/recruit') ? 'active-submenu' : '' %>">공모전 팀원 모집</a></li>
-  </ul>
-</li>
-
-
-          <li>
-            <div class="menu-item">
-              <div class="left">
-                <img src="/images/human.png" class="icon" alt="포트폴리오" />
-                <span>나의 포트폴리오</span>
-              </div>
-            </div>
-          </li>
-
-          <li class="dropdown">
             <div class="menu-item dropdown-toggle">
               <div class="left">
-                <img src="/images/Group_human.png" class="icon" alt="커뮤니티" />
-                <span>커뮤니티</span>
+                <img src="/images/<%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'Trophy_blue.png' : 'Trophy.png' %>" class="icon" alt="공모전" />
+                <span class="<%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'submenu-highlight' : '' %>">공모전 페이지</span>
               </div>
               <img src="/images/toggle.png" class="arrow-icon" />
             </div>
             <ul class="submenu">
-              <li>스터디원 모집</li>
-              <li>Q&A</li>
-              <li>공모전 후기</li>
+              <li><a href="/contest" class="<%= currentPath === '/contest' ? 'active-submenu' : '' %>">공모전 정보</a></li>
+              <li><a href="/recruit" class="<%= currentPath === '/recruit' ? 'active-submenu' : '' %>">공모전 팀원 모집</a></li>
             </ul>
           </li>
+
+
+          <li>
+  <a href="/portfolio/<%= user.id %>" class="menu-item">
+    <div class="left">
+      <img src="/images/human.png" class="icon" alt="포트폴리오" />
+      <span>나의 포트폴리오</span>
+    </div>
+  </a>
+</li>
+
+          <li class="dropdown <%= currentPath.startsWith('/community') ? 'active' : '' %>">
+  <div class="menu-item dropdown-toggle">
+    <div class="left">
+      <img src="/images/<%= currentPath.startsWith('/community') ? 'Group_blue.png' : 'Group_human.png' %>" class="icon" alt="커뮤니티" />
+      <span class="<%= currentPath.startsWith('/community') ? 'submenu-highlight' : '' %>">커뮤니티</span>
+    </div>
+    <img src="/images/toggle.png" class="arrow-icon" />
+  </div>
+  <ul class="submenu">
+  <li>
+    <a href="/community" class="<%= decodeURIComponent(currentPath) === '/community' ? 'active-submenu' : '' %>">
+      커뮤니티
+    </a>
+  </li>
+  <li>
+    <a href="/community?category=스터디원 모집" class="<%= decodeURIComponent(currentPath).includes('스터디원 모집') ? 'active-submenu' : '' %>">
+      스터디원 모집
+    </a>
+  </li>
+  <li>
+    <a href="/community?category=Q%26A" class="<%= decodeURIComponent(currentPath).includes('Q&A') ? 'active-submenu' : '' %>">
+      Q&A
+    </a>
+  </li>
+  <li>
+    <a href="/community?category=공모전 후기" class="<%= decodeURIComponent(currentPath).includes('공모전 후기') ? 'active-submenu' : '' %>">
+      공모전 후기
+    </a>
+  </li>
+</ul>
 
           <li class="timer-menu">
             <div class="menu-item">
@@ -78,6 +95,11 @@
 
             <div class="timer-layout">
               <div class="timer-blocks">
+                <div class="time-group">
+                  <div class="time-cell" id="hourTens">0</div>
+                  <div class="time-cell" id="hourOnes">0</div>
+                </div>
+                <div class="colon">:</div>
                 <div class="time-group">
                   <div class="time-cell" id="minuteTens">0</div>
                   <div class="time-cell" id="minuteOnes">0</div>

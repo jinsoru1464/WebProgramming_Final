@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>공공재 메인페이지</title>
+  <!-- ✅ CSS 경로 수정 -->
+  <!-- <link rel="stylesheet" href="/css/main(LogX).css"> -->
+  <link rel="stylesheet" href="/css/portfolio_edit.css">
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo-area">
+        <a href="/main">
+          <img src="/images/reallogo 1.png" alt="공공재 로고" class="logo" />
+        </a>
+      </div>
+
+      <nav>
+        <ul class="menu">
+          <li class="<%= currentPath === '/main' || currentPath === '/' ? 'active' : '' %>">
+            <a href="/main" class="menu-item">
+              <div class="left">
+                <img src="/images/<%= currentPath === '/main' || currentPath === '/' ? 'Home_Blue.png' : 'Home.png' %>" class="icon" alt="홈" />
+                <span>홈</span>
+              </div>
+            </a>
+          </li>
+
+          <!-- 공모전 페이지 -->
+          <li class="dropdown <%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'active' : '' %>">
+            <div class="menu-item dropdown-toggle">
+              <div class="left">
+                <img src="/images/<%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'Trophy_blue.png' : 'Trophy.png' %>" class="icon" alt="공모전" />
+                <span class="<%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'submenu-highlight' : '' %>">공모전 페이지</span>
+              </div>
+              <img src="/images/toggle.png" class="arrow-icon" />
+            </div>
+            <ul class="submenu">
+              <li><a href="/contest" class="<%= currentPath === '/contest' ? 'active-submenu' : '' %>">공모전 정보</a></li>
+              <li><a href="/recruit" class="<%= currentPath === '/recruit' ? 'active-submenu' : '' %>">공모전 팀원 모집</a></li>
+            </ul>
+          </li>
+
+          <% const isPortfolioPage = currentPath.startsWith('/portfolio') || currentPath === '/portfolio_edit' || currentPath === '/editPortfolio'; %>
+<li class="<%= isPortfolioPage ? 'active' : '' %>">
+  <a href="/portfolio/<%= user.id %>" class="menu-item">
+    <div class="left">
+      <img src="/images/<%= isPortfolioPage ? 'human_blue.png' : 'human.png' %>" class="icon" alt="포트폴리오" />
+      <span class="<%= isPortfolioPage ? 'submenu-highlight' : '' %>">나의 포트폴리오</span>
+    </div>
+  </a>
+</li>
+
+
+
+
+          <li class="dropdown <%= currentPath.startsWith('/community') ? 'active' : '' %>">
+  <div class="menu-item dropdown-toggle">
+    <div class="left">
+      <img src="/images/<%= currentPath.startsWith('/community') ? 'Group_blue.png' : 'Group_human.png' %>" class="icon" alt="커뮤니티" />
+      <span class="<%= currentPath.startsWith('/community') ? 'submenu-highlight' : '' %>">커뮤니티</span>
+    </div>
+    <img src="/images/toggle.png" class="arrow-icon" />
+  </div>
+  <ul class="submenu">
+  <li>
+    <a href="/community" class="<%= decodeURIComponent(currentPath) === '/community' ? 'active-submenu' : '' %>">
+      커뮤니티
+    </a>
+  </li>
+  <li>
+    <a href="/community?category=스터디원 모집" class="<%= decodeURIComponent(currentPath).includes('스터디원 모집') ? 'active-submenu' : '' %>">
+      스터디원 모집
+    </a>
+  </li>
+  <li>
+    <a href="/community?category=Q%26A" class="<%= decodeURIComponent(currentPath).includes('Q&A') ? 'active-submenu' : '' %>">
+      Q&A
+    </a>
+  </li>
+  <li>
+    <a href="/community?category=공모전 후기" class="<%= decodeURIComponent(currentPath).includes('공모전 후기') ? 'active-submenu' : '' %>">
+      공모전 후기
+    </a>
+  </li>
+</ul>
+
+          <li class="timer-menu">
+            <div class="menu-item">
+              <div class="left">
+                <img id="timerIcon" src="/images/Timer.png" class="icon" alt="타이머" />
+                <span id="timerText">타이머</span>
+              </div>
+            </div>
+
+            <div class="timer-layout">
+              <div class="timer-blocks">
+                <div class="time-group">
+                  <div class="time-cell" id="hourTens">0</div>
+                  <div class="time-cell" id="hourOnes">0</div>
+                </div>
+                <div class="colon">:</div>
+                <div class="time-group">
+                  <div class="time-cell" id="minuteTens">0</div>
+                  <div class="time-cell" id="minuteOnes">0</div>
+                </div>
+                <div class="colon">:</div>
+                <div class="time-group">
+                  <div class="time-cell" id="secondTens">0</div>
+                  <div class="time-cell" id="secondOnes">0</div>
+                </div>
+              </div>
+
+              <div class="timer-controls">
+                <input type="text" class="keyword-input" placeholder="키워드" />
+                <div class="timer-buttons">
+                  <button class="start-btn"><img src="/images/Play.png" alt="시작" /></button>
+                  <button class="stop-btn"><img src="/images/Stop circle.png" alt="정지" /></button>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="recent-section">
+        <div class="recent-title">최근 학습</div>
+        <div class="recent-graph" id="recentGraph"></div>
+      </div>
+
+      <div class="logout-section">
+        <button class="logout-btn" onclick="location.href='/logout'">
+          <img src="/images/logOut.png" class="logout-icon" />
+          로그아웃
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="portfolio-header">
+        <div class="inner-container">
+          <h1>Portfolio</h1>
+        </div>
+      </div>
+      <div class = "portfolio-body">
+        <div class="user-info">
+          <div class="user-text">
+            <input class="name-input" type="text" placeholder="이름을 입력하세요" value="<%= name ? name : '' %>"/>
+            <div class="about-box">
+              <p class="about-title">about me</p>
+              <textarea class="about-textarea" placeholder="본인을 소개해주세요!"><%= about ? about : '' %></textarea>
+            </div>            
+          </div>
+        
+          <div class="user-photo-skill">
+              <div class="photo-box" onclick="document.getElementById('profileInput').click()">
+                <% if (profileImage) { %>
+                <img id="profilePreview" src="/uploads/<%= profileImage %>" alt="프로필 이미지"/>
+                <% } else { %>
+                  <img
+                    id="profilePreview"
+                    src=""
+                    alt="프로필 이미지"
+                    style="display: none;"
+                  />
+                  <div id="photoPlaceholder" class="photo-placeholder">+</div>
+                <% } %>
+                <input type="file" id="profileInput" name="profileImage" accept="image/*" style="display: none;" />
+              </div>
+
+          
+            <div class="skills-section">
+              <div class="skills" id="skillList">
+                <% if (skills && skills.length > 0) { %>
+                  <% skills.forEach(skill => { %>
+                    <div
+  class="skill-button"
+  <%= skill.color ? `style="background-color: ${skill.color};"` : '' %>
+>
+
+                      <input
+                        type="text"
+                        class="skill-input"
+                        value="<%= skill.name %>"
+                      />
+                      <input
+                        type="color"
+                        class="color-picker"
+                        value="<%= skill.color %>"
+                      />
+                    </div>
+                  <% }) %>
+                <% } %>
+              </div>
+              <button class="add-skill-button" onclick="addSkill()">+</button>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <section class="study-record">
+          <h3>공부 기록</h3>
+          <p id="studyDays">현재 0일</p>
+
+
+        
+          <div class="study-graph-area">
+            <!-- 좌측 요일 -->
+            <div class="weekdays">
+              <div>SUN</div>
+              <div>MON</div>
+              <div>TUE</div>
+              <div>WED</div>
+              <div>THU</div>
+              <div>FRI</div>
+              <div>SAT</div>
+            </div>
+        
+            <!-- 우측 달력 스크롤 영역 -->
+<div class="calendar-scroll">
+  <div class="calendar-track" id="calendarTrack">
+    <!-- JS에서 생성할 예정 -->
+  </div>
+</div>
+
+        
+            <!-- 우측 원형 요약 -->
+            <div class="summary-circle">
+  <canvas id="keywordPieChart" width="150" height="150"></canvas>
+  <ul id="keywordLegend" style="margin-top: 10px;"></ul>
+</div>
+
+          </div>
+        </section>
+        
+      
+        <section class="project-add-section">      
+          <!-- 추가될 카드들이 들어가는 영역 -->
+          <div id="project-card-container">
+            <% if (projects && projects.length > 0) { %>
+              <% projects.forEach(project => { %>
+                <div class="project-added-card show">
+                  <div class="project-label">
+                    <input type="text" class="project-title-input" value="<%= project.title %>" />
+                    <p class="project-delete">X</p>
+                  </div>
+                  <hr class="project-divider" />
+                  <div class="project-detail">
+                    <textarea class="project-description"><%= project.description %></textarea>
+                  </div>
+                </div>
+              <% }) %>
+            <% } %>
+          </div>
+        
+          <!-- + 카드 -->
+          <div class="project-add-button" onclick="addProjectCard()">
+            <div class="project-label">새 프로젝트 추가</div>
+            <hr class="project-divider" />
+            <div class="project-add-card">
+              <div class="plus-icon">+</div>
+            </div>
+          </div>                    
+        </section>
+        
+        <input type="hidden" id="userId" value="<%= user.id %>" />
+
+        <!-- 수정 완료 버튼 -->
+        <div style="text-align: right; margin: 0 0;">
+          <button class="btn save" id="saveBtn">수정 완료</button>
+        </div>
+        
+      </div>
+      
+    </main>
+  </div>
+  <script src="/js/portfolio_edit.js"></script>
+    <script src="/js/sidebar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<!-- 전역 데이터 변수 정의 -->
+<script>
+  const studyData = <%- JSON.stringify(daily_study_summary || []) %>;
+  const keywordData = <%- JSON.stringify(keyword_study_summary || []) %>;
+
+  window.studyData = studyData;
+  window.keywordData = keywordData;
+</script>
+
+</body>
+</html>

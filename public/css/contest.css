@@ -1,0 +1,621 @@
+/* 기본 설정 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Pretendard', sans-serif;
+  background-color: #f4f7fa;
+  font-size: 16px;
+}
+
+/* 전체 레이아웃 */
+.container {
+  display: flex;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  background: white;
+  border-right: 1px solid #ddd;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.logo-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1px;
+}
+
+.logo-area img.logo {
+  width: 180px;
+  height: auto;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.menu a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.menu li {
+  margin-bottom: 0.7rem;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.menu-item .left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-item span {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+.arrow-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s;
+}
+
+.submenu {
+  display: none;
+  list-style: none;
+  padding-left: 1.8rem;
+  margin: 6px 0 10px 0;
+  font-size: 0.92rem;
+  color: #666;
+}
+
+
+.dropdown.open .submenu {
+  display: block;
+}
+
+.submenu li {
+  margin: 4px 0;
+  line-height: 1.4;
+}
+
+.submenu a.active-submenu {
+  color: #2B8DB8;
+  font-weight: 600;
+}
+
+.menu li.active .menu-item {
+  background-color: #f0f0f0;
+  border-radius: 6px;
+}
+
+.menu li.active .menu-item span {
+  color: #2C8FB9;
+  font-weight: 600;
+}
+
+.menu li.active .icon {
+  filter: brightness(0) saturate(100%) invert(27%) sepia(99%) saturate(746%) hue-rotate(195deg) brightness(95%) contrast(97%);
+}
+
+/* 타이머 */
+.timer-layout {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.timer-blocks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+
+.time-group {
+  display: flex;
+  gap: 4px;
+}
+
+.colon {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 2px;
+}
+
+.time-cell {
+  width: 32px;
+  height: 32px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  color: #444;
+}
+
+.timer-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.keyword-input {
+  width: 140px;
+  padding: 6px 12px;
+  background-color: #ececec;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.timer-buttons {
+  display: flex;
+  gap: 1px;
+}
+
+.start-btn,
+.stop-btn {
+  all: unset;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.start-btn img,
+.stop-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.timer-active .time-cell {
+  background-color: #d0e8ff;
+  color: #2C8FB9;
+}
+
+.timer-active .keyword-input {
+  background-color: #e0f3ff;
+  border: 1px solid #2C8FB9;
+  color: #2C8FB9;
+}
+
+.timer-active .start-btn,
+.timer-active .stop-btn {
+  background-color: #2C8FB9;
+  border-radius: 6px;
+}
+
+.timer-active .start-btn img,
+.timer-active .stop-btn img {
+  filter: brightness(0) invert(1);
+}
+
+.timer-active .menu-item span {
+  color: #2C8FB9;
+  font-weight: 700;
+}
+
+/* 최근 학습 */
+.recent-section {
+  margin-top: 2rem;
+}
+
+.recent-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 6px;
+}
+
+.recent-graph {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  background-color: #f3f3f3;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.block {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  background-color: #b2f5b2;
+  position: relative;
+}
+
+.block:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  z-index: 10;
+  opacity: 0.95;
+}
+
+/* 로그아웃 */
+.logout-section {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #444;
+  font-size: 1rem;
+  padding: 8px 4px;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.logout-btn:hover {
+  background-color: #f0f0f0;
+  border-radius: 6px;
+}
+
+.logout-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* 메인영역 */
+main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#contest_header {
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  color: #8E8E93;
+  background-color: white;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+  height: 60px;
+  padding: 0 15px;
+}
+
+.user_keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 10px 0 10px; /* 왼쪽 여백 및 위쪽 여백 */
+  font-size: 0.95rem;
+  color: #555;
+  align-items: center;
+}
+
+.user_keywords strong {
+  font-weight: 600;
+  margin-right: 6px;
+  color: #333;
+}
+
+
+
+.contest_section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: white;
+  margin: 10px 0 0 10px;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+
+.contest_section .contest_list {
+  box-shadow: none;
+}
+
+.btn_group {
+  display: flex;
+  column-gap: 24px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.btn_group button {
+  width: 90px;
+  height: 45px;
+  background-color: #f5f5f5;
+  border: 1px solid #aaa;
+  color: rgba(0, 0, 0, 0.7);
+  border-radius: 20px;
+  padding: 10px;
+  padding-bottom: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn_group button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.keyword_search_box {
+  display: none;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0; /* 패딩 제거하고 버튼 높이에 맞게 정렬 */
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  height: 45px; /* 버튼 높이와 동일하게! */
+}
+
+.keyword_search_box input {
+  flex: 1;
+  height: 100%; /* 부모높이 그대로 */
+  padding: 0 10px; /* 좌우 padding만 */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+}
+
+.keyword_search_box button {
+  height: 100%; /* 부모높이 그대로 */
+  padding: 0 12px; /* 세로는 자동으로 맞춤 */
+  background-color: #4a90e2;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+  appearance: none;
+}
+
+.keyword_search_box button:hover {
+  transform: none;  /* 덮어쓰기! */
+  box-shadow: none; /* 덮어쓰기! */
+}
+/* 카드 리스트 */
+.contest_list {
+  display: grid;
+  grid-template-columns: repeat(3, 260px); /* 카드 너비 키움 */
+  column-gap: 80px;
+  row-gap: 40px;
+  justify-content: center;
+  padding: 24px;
+  margin-left: 10px;
+  margin-top: 10px;
+  background-color: white;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 카드 전체 래퍼: 높이 키움 */
+.card_wrapper {
+  width: 260px; /* 너비 키움 */
+  border: none;
+  border-radius: 12px;
+  overflow: visible;
+  perspective: 1000px;
+  height: 440px; /* 높이 키움 */
+}
+
+/* 카드 내부: 테두리, 높이 */
+.card_inner {
+  border: 1px solid black;
+  border-radius: 12px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+
+/* 이미지: 크기 유지, 위아래 간격 잘리지 않도록 */
+.card_wrapper img {
+  width: 100%;
+  height: 280px; /* 이미지 영역 키움 */
+  object-fit:fill;
+  border-bottom: 1px solid black;
+}
+
+.card_wrapper.flipped .card_inner {
+  transform: rotateY(180deg);
+}
+
+.card_front,
+.card_back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  overflow: hidden;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.card_back {
+  transform: rotateY(180deg);
+  padding: 12px;
+  color: #333;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* 카드 뒷면 텍스트 여백 */
+.card_back p {
+  margin: 4px 0;
+}
+
+/* 카드 뒷면 링크 스타일 */
+.card_back a {
+  color: #4a90e2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.card_back a:hover {
+  text-decoration: underline;
+}
+
+/* 키워드 */
+.card_tag {
+  font-size: 0.9rem;
+  color: #888;
+  text-align: right;
+  padding: 4px 12px 0;
+}
+
+/* 공모전 이름 */
+.card_title {
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 4px 12px;
+  color: #333;
+  line-height: 1.2;
+}
+
+/* 마감일 */
+.card_dday {
+  font-size: 0.9rem;
+  color: #555;
+  padding: 4px 12px 12px;
+}
+
+/* fade-out 애니메이션 */
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+/* fade-in 애니메이션 */
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.page-btn {
+  padding: 6px 12px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.page-btn.active {
+  background-color: #2B8DB8;
+  color: white;
+  border-color: #2B8DB8;
+}
+
+.page-btn:hover {
+  background-color: #2B8DB8;
+  color: white;
+  border-color: #2B8DB8;
+}
+
+.page-btn i {
+  color: #2B8DB8;
+}
+
+.page-btn:hover i {
+  color: white;
+}
+
+
+.user_keywords {
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  background: #f4f7fa;
+  border-radius: 8px;
+}
+
+.keyword_tag {
+  display: inline-block;
+  margin: 0.3rem;
+  padding: 0.4rem 0.6rem;
+  background: #dceeff;
+  border-radius: 20px;
+  font-weight: 500;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.keyword_tag:hover {
+  background: #b3dcff;
+}
+
+.remove-btn {
+  margin-left: 5px;
+  font-weight: bold;
+  color: #666;
+  cursor: pointer;
+  display: none;
+}
+
+.keyword_tag:hover .remove-btn {
+  display: inline;
+}

@@ -15,7 +15,6 @@ body {
 .container {
   display: flex;
   min-height: 100vh;
-  align-items: stretch;
   overflow-x: hidden;
 }
 
@@ -98,6 +97,7 @@ body {
   font-size: 0.92rem;
   color: #666;
 }
+
 
 .dropdown.open .submenu {
   display: block;
@@ -310,95 +310,158 @@ body {
   height: 20px;
 }
 
-/* 본문 영역 */
+/* 메인 콘텐츠 영역 */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 40px 0;
-  background-color: #f9f9f9;
+  justify-content: flex-start;
   align-items: center;
-}
-
-/* 글쓰기 박스 */
-.write-wrapper {
   background-color: white;
-  border: 2px solid #f1f1f5;
-  border-radius: 8px;
-  padding: 40px;
+  padding: 60px;
+  margin-left: 10px;
   width: 800px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.write-wrapper h2 {
-  font-size: 28px;
-  font-weight: bold;
-  color: #2b2b2b;
-  margin-bottom: 20px;
+/* 텍스트와 로고 수평 정렬 (홈 화면 용) */
+.intro-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 80px;
+  margin-bottom: 40px;
+  text-align: left;
 }
 
+.intro-text h1 {
+  color: #2b76ba;
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.intro-text p {
+  font-size: 24px;
+  color: #555;
+}
+
+.main-logo img {
+  width: 400px;
+}
+
+/* 메인 버튼 영역 (홈 화면 용) */
+
+.title-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+}
+.page-title {
+  text-align: left;
+  font-size: 50px;
+  font-weight: 800;
+  color: #8E8E93;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+}
+
+.divider {
+  height: 11px;
+  background-color: #2C8FB9; /* 메뉴 테두리 색과 일치 */
+  border: none;
+  margin: 0 auto 2rem auto;
+  width: 100%;
+}
+
+.buttons {
+  display: flex;
+  gap: 80px;
+}
+
+.main-btn {
+  background-color: #4a90e2;
+  color: white;
+  padding: 22px 30px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+}
+
+/* 🎯 글쓰기 폼 전용 스타일 */
 .write-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+  gap: 1rem;
 }
 
 .write-form label {
   font-weight: bold;
+  margin-top: 1rem;
   color: #333;
-  margin-bottom: 6px;
 }
 
 .write-form input[type="text"],
+.write-form select,
 .write-form textarea,
 .write-form input[type="file"] {
-  padding: 12px;
+  width: 100%;
+  padding: 0.8rem;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
-  width: 100%;
+  font-family: 'Pretendard', sans-serif;
   background-color: #fff;
 }
 
 .write-form textarea {
   resize: vertical;
-  min-height: 160px;
 }
 
-input[type="file"] {
-  padding: 8px;
-  background-color: #fafafa;
-}
-
-/* 등록 버튼 */
-.submit-btn {
-  background-color: #2B8DB8;
+.write-btn {
+  background-color: #2C8FB9;
   color: white;
+  padding: 1rem 2rem;
   border: none;
-  padding: 12px 20px;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
   cursor: pointer;
-  align-self: flex-end;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  align-self: flex-end; /* 버튼을 오른쪽 아래로 정렬 */
+}
+
+.write-btn:hover {
+  background-color: #1b6fa8;
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.submit-btn {
+  background-color: #2C8FB9;
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .submit-btn:hover {
-  background-color: #1e6d95;
+  background-color: #1a6c9e;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* placeholder 스타일 통일 */
-.write-form input::placeholder,
-.write-form textarea::placeholder {
-  font-family: 'Pretendard', sans-serif;
-  font-size: 1rem;
-  color: #aaa;
+.submit-btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
 }
-
-.write-form input[type="text"],
-.write-form textarea {
-  font-family: 'Pretendard', sans-serif;
-}
-
-
