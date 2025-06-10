@@ -221,13 +221,13 @@
         </div>
 
         <div class="pagination">
-  <% if (currentPage > 1) { %>
-    <a href="/contest?page=<%= currentPage - 1 %>">
+  <% if (groupStart > 1) { %>
+    <a href="/contest?page=<%= groupStart - 1 %>">
       <button class="page-btn">&lt;</button>
     </a>
   <% } %>
 
-  <% for(let i = 1; i <= totalPages; i++) { %>
+  <% for (let i = groupStart; i <= groupEnd; i++) { %>
     <a href="/contest?page=<%= i %>">
       <button class="page-btn <%= currentPage === i ? 'active' : '' %>">
         <%= i %>
@@ -235,12 +235,13 @@
     </a>
   <% } %>
 
-  <% if (currentPage < totalPages) { %>
-    <a href="/contest?page=<%= currentPage + 1 %>">
+  <% if (groupEnd < totalPages) { %>
+    <a href="/contest?page=<%= groupEnd + 1 %>">
       <button class="page-btn">&gt;</button>
     </a>
   <% } %>
 </div>
+
       </div>
       
     </main>
@@ -251,6 +252,7 @@ let currentFilter = 'all';
 let currentKeyword = '';
 const originalKeywords = JSON.parse('<%- JSON.stringify(userKeywords || []) %>');
 let currentRecommendedKeywords = originalKeywords.slice(0, 3); // 최대 3개 노출
+let removedKeywords = [];
 
 function toggleKeywordSearchBox() {
   $('#keyword_search_box').toggle();
@@ -261,7 +263,7 @@ function toggleKeywordSearchBox() {
     currentKeyword = '';
     $.get('/contest/filter', { filter: 'all', page: 1 }, function(res){
       renderContests(res.contests, true);
-      updatePagination(res.currentPage, res.totalPages);
+      updatePagination(res.currentPage, res.totalPages, res.groupStart, res.groupEnd);
     });
   }
 }
@@ -313,20 +315,20 @@ function updateContestHtml(container, contests){
   container.html(html);
 }
 
-function updatePagination(currentPage, totalPages) {
+function updatePagination(currentPage, totalPages, groupStart, groupEnd) {
   const container = $('.pagination');
   let html = '';
 
-  if (currentPage > 1) {
-    html += `<button class="page-btn" data-page="${currentPage - 1}">&lt;</button>`;
+  if (groupStart > 1) {
+    html += `<button class="page-btn" data-page="${groupStart - 1}">&lt;</button>`;
   }
 
-  for (let i = 1; i <= totalPages; i++) {
+  for (let i = groupStart; i <= groupEnd; i++) {
     html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
   }
 
-  if (currentPage < totalPages) {
-    html += `<button class="page-btn" data-page="${currentPage + 1}">&gt;</button>`;
+  if (groupEnd < totalPages) {
+    html += `<button class="page-btn" data-page="${groupEnd + 1}">&gt;</button>`;
   }
 
   container.html(html);
@@ -350,7 +352,6 @@ function renderKeywordTags() {
   });
   container.html(html);
 }
-
 
 function renderRecommendedContests(list) {
   const container = $('.contest_list').first();
@@ -402,36 +403,26 @@ $(document).ready(function(){
       $('#keyword_search_box').hide();
       $.get('/contest/filter', { filter: currentFilter, page: 1 }, function(res){
         renderContests(res.contests, false);
-        updatePagination(res.currentPage, res.totalPages);
+        updatePagination(res.currentPage, res.totalPages, res.groupStart, res.groupEnd);
       });
     }
   });
 
-  // ✅ 키워드 제거 시 다음 키워드 자동 보충
-  let removedKeywords = [];
+  $(document).on('click', '.remove-btn', function (e) {
+    e.stopPropagation();
+    const text = $(this).closest('.keyword_tag').text().replace('#', '').replace('×', '').trim();
 
-$(document).on('click', '.remove-btn', function (e) {
-  e.stopPropagation();
-  const text = $(this).closest('.keyword_tag').text().replace('#', '').replace('×', '').trim();
+    removedKeywords.push(text);
+    currentRecommendedKeywords = currentRecommendedKeywords.filter(k => k !== text);
 
-  // 제거 목록에 추가
-  removedKeywords.push(text);
-
-  // 현재 추천 키워드에서 제거
-  currentRecommendedKeywords = currentRecommendedKeywords.filter(k => k !== text);
-
-  // 서버에 요청 (removed 전달)
-  $.get('/contest/recommend', {
-  removed: removedKeywords.join(',')
-}, function (res) {
-  currentRecommendedKeywords = res.usedKeywords || [];
-  renderKeywordTags();
-  renderRecommendedContests(res.contests || []);
-});
-
-});
-
-
+    $.get('/contest/recommend', {
+      removed: removedKeywords.join(',')
+    }, function (res) {
+      currentRecommendedKeywords = res.usedKeywords || [];
+      renderKeywordTags();
+      renderRecommendedContests(res.contests || []);
+    });
+  });
 
   $(document).on('click', '#searchBtn', function(){
     const keyword = $('#keywordInput').val().trim();
@@ -440,7 +431,7 @@ $(document).on('click', '.remove-btn', function (e) {
 
     $.get('/contest/filter', { filter: currentFilter, keyword: currentKeyword, page: 1 }, function(res){
       renderContests(res.contests, false);
-      updatePagination(res.currentPage, res.totalPages);
+      updatePagination(res.currentPage, res.totalPages, res.groupStart, res.groupEnd);
     });
   });
 
@@ -453,11 +444,12 @@ $(document).on('click', '.remove-btn', function (e) {
       page
     }, function(res){
       renderContests(res.contests, false);
-      updatePagination(res.currentPage, res.totalPages);
+      updatePagination(res.currentPage, res.totalPages, res.groupStart, res.groupEnd);
     });
   });
 });
 </script>
+
 
 
 

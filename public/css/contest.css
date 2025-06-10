@@ -619,3 +619,37 @@ main {
 .keyword_tag:hover .remove-btn {
   display: inline;
 }
+
+
+/* 사용자가 카드가 뒤집힌다는 걸 인식할 수 있도록 힌트 */
+.card_wrapper {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card_wrapper:hover {
+  transform: translateY(-6px) ;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 호버 시 우측 상단에 '뒤집기' 힌트 표시 */
+.card_wrapper::after {
+  content: "뒤집어보기";
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+}
+
+.card_wrapper:hover::after {
+  opacity: 1;
+}

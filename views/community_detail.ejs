@@ -159,9 +159,8 @@
           </div>
         </section>
 
-        
 
-<% if (post.user_id === user.id) { %>
+        <% if (post.user_id === user.id) { %>
   <div class="post-actions">
     <a href="/community/<%= post.id %>/edit" class="edit-btn">수정</a>
 
@@ -170,6 +169,41 @@
     </form>
   </div>
 <% } %>
+        
+
+<section class="comment-section">
+  <h3>댓글</h3>
+
+  <!-- ✅ 댓글 작성 폼 -->
+  <form action="/community/<%= post.id %>/comments" method="POST" class="comment-form">
+    <textarea name="content" placeholder="댓글을 입력하세요" required></textarea>
+    <button type="submit">작성</button>
+  </form>
+
+  <!-- ✅ 댓글 목록 -->
+  <ul class="comment-list">
+    <% comments.forEach(comment => { %>
+      <li class="comment-item">
+        <div class="comment-header">
+  <div class="comment-meta">
+    <strong><%= comment.author %></strong>
+    <span class="comment-date"><%= new Date(comment.created_at).toLocaleString() %></span>
+  </div>
+
+  <% if (comment.user_id === user.id) { %>
+    <form action="/community/<%= post.id %>/comments/<%= comment.id %>?_method=DELETE" method="POST" style="display:inline;">
+      <button type="submit" class="delete-comment-btn">삭제</button>
+    </form>
+  <% } %>
+</div>
+
+        <p class="comment-content"><%= comment.content %></p>
+      </li>
+    <% }) %>
+  </ul>
+</section>
+
+
 
 
       </main>
