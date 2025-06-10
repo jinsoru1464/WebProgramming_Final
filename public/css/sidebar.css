@@ -310,3 +310,8 @@ body {
 .menu a:visited {
   color: inherit;
 }
+
+.menu a {
+  color: inherit;
+  text-decoration: none;
+}
