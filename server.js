@@ -239,11 +239,21 @@ await db.execute(
           WHERE rp.id = ?
         `, [postId]);
 
+                // ✅ 댓글 목록 가져오기 추가
+const [comments] = await db.execute(`
+  SELECT rc.*, u.nickname AS author
+  FROM recruit_comments rc
+  JOIN users u ON rc.user_id = u.id
+  WHERE rc.post_id = ?
+  ORDER BY rc.created_at ASC
+`, [postId]);
+
         if (!post) return res.status(404).send('게시글을 찾을 수 없습니다.');
 
         res.render('team_recruit_detail', {
           post,
           user: req.user,
+          comments,
           currentPath: req.path
         });
       } catch (err) {
@@ -308,6 +318,49 @@ await db.execute(
       await db.query('DELETE FROM recruit_posts WHERE id = ?', [req.params.id]);
       res.redirect('/recruit');
     });
+
+    app.post('/recruit/:id/comments', authenticateToken, async (req, res) => {
+  const postId = req.params.id;
+  const userId = req.user.id;
+  const { content } = req.body;
+
+  if (!content) return res.status(400).send('댓글 내용을 입력해주세요.');
+
+  try {
+    await db.execute(
+      'INSERT INTO recruit_comments (post_id, user_id, content) VALUES (?, ?, ?)',
+      [postId, userId, content]
+    );
+    res.redirect(`/recruit/${postId}`);
+  } catch (err) {
+    console.error('❌ recruit 댓글 저장 오류:', err);
+    res.status(500).send('댓글 저장 중 오류');
+  }
+});
+
+app.delete('/recruit/:postId/comments/:commentId', authenticateToken, async (req, res) => {
+  const { postId, commentId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const [[comment]] = await db.execute(
+      'SELECT * FROM recruit_comments WHERE id = ?',
+      [commentId]
+    );
+
+    if (!comment) return res.status(404).send('댓글을 찾을 수 없습니다.');
+    if (comment.user_id !== userId) {
+      return res.status(403).send('삭제 권한이 없습니다.');
+    }
+
+    await db.execute('DELETE FROM recruit_comments WHERE id = ?', [commentId]);
+    res.redirect(`/recruit/${postId}`);
+  } catch (err) {
+    console.error('❌ recruit 댓글 삭제 오류:', err);
+    res.status(500).send('댓글 삭제 중 오류');
+  }
+});
+
 
   // ✅ 커뮤니티 목록 페이지
   app.get('/community', authenticateToken, async (req, res) => {
@@ -435,6 +488,15 @@ await db.execute(
         WHERE c.id = ?
       `, [postId]);
 
+      const [comments] = await db.execute(`
+  SELECT cc.*, u.nickname AS author
+  FROM community_comments cc
+  JOIN users u ON cc.user_id = u.id
+  WHERE cc.post_id = ?
+  ORDER BY cc.created_at ASC
+`, [postId]);
+
+
       if (!post) return res.status(404).send('게시글을 찾을 수 없습니다.');
 
       // 카테고리 기반 타이틀 설정
@@ -447,6 +509,7 @@ await db.execute(
         post,
         user: req.user,              // JWT에서 추출된 유저 정보
         currentPath: req.originalUrl,
+        comments,
         pageTitle                    // ✅ 오류 해결 핵심
       });
     } catch (err) {
@@ -470,6 +533,53 @@ await db.execute(
     await db.query('DELETE FROM community_posts WHERE id = ?', [postId]);
     res.redirect('/community');
   });
+
+
+  app.post('/community/:id/comments', authenticateToken, async (req, res) => {
+  const postId = req.params.id;
+  const userId = req.user.id;
+  const { content } = req.body;
+
+  if (!content) return res.status(400).send('댓글 내용을 입력해주세요.');
+
+  try {
+    await db.execute(
+      'INSERT INTO community_comments (post_id, user_id, content) VALUES (?, ?, ?)',
+      [postId, userId, content]
+    );
+    res.redirect(`/community/${postId}`);
+  } catch (err) {
+    console.error('❌ 댓글 저장 오류:', err);
+    res.status(500).send('댓글 저장 중 오류');
+  }
+});
+
+// ✅ 댓글 삭제
+app.delete('/community/:postId/comments/:commentId', authenticateToken, async (req, res) => {
+  const { postId, commentId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    // 댓글 소유자 확인
+    const [[comment]] = await db.execute(
+      'SELECT * FROM community_comments WHERE id = ?',
+      [commentId]
+    );
+
+    if (!comment) return res.status(404).send('댓글을 찾을 수 없습니다.');
+    if (comment.user_id !== userId) {
+      return res.status(403).send('삭제 권한이 없습니다.');
+    }
+
+    await db.execute('DELETE FROM community_comments WHERE id = ?', [commentId]);
+    res.redirect(`/community/${postId}`);
+  } catch (err) {
+    console.error('❌ 댓글 삭제 오류:', err);
+    res.status(500).send('댓글 삭제 중 오류 발생');
+  }
+});
+
+
 
   // ✅ contest 라우팅 로직 추가 (recruit와 유사하게 구성)
   app.get('/contest', authenticateToken, async (req, res) => {
@@ -535,11 +645,19 @@ if (userKeywords.length > 0) {
         });
       };
 
+
+      const groupSize = 10;
+const currentGroup = Math.floor((page - 1) / groupSize);
+const groupStart = currentGroup * groupSize + 1;
+const groupEnd = Math.min(groupStart + groupSize - 1, totalPages);
+
       res.render('contest', {
         recommendedContests: processContests(recommendedRows),
         contests: processContests(allContests),
         currentPage: page,
         totalPages,
+        groupStart,       // 👈 추가
+        groupEnd,  
         currentPath: req.path,
         allKeywords: [],
         user: req.user,
@@ -584,6 +702,11 @@ if (filter === 'all') {
       const [[{ count }]] = await db.execute(countQuery, whereParams);
       const totalPages = Math.ceil(count / perPage);
 
+      const groupSize = 10;
+const currentGroup = Math.floor((page - 1) / groupSize);
+const groupStart = currentGroup * groupSize + 1;
+const groupEnd = Math.min(groupStart + groupSize - 1, totalPages);
+
       // ✅ LIMIT 직접 넣기
       const listQuery = `SELECT * FROM contests ${whereClause} ${orderBy} LIMIT ${offset}, ${perPage}`;
       console.log('✅ listQuery:', listQuery);
@@ -605,6 +728,8 @@ if (filter === 'all') {
 
       res.json({
         contests: result,
+        groupStart,       // 👈 추가
+        groupEnd, 
         currentPage: page,
         totalPages
       });

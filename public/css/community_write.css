@@ -465,3 +465,15 @@ body {
   transform: translateY(1px);
   box-shadow: none;
 }
+
+.card-author {
+  font-weight: 600;
+  color: #2B8DB8;
+  background-color: #eef4ff;
+  padding: 6px 14px;         /* ✅ 공간감 확보 */
+  border-radius: 6px;       /* ✅ 더 부드럽고 배지스럽게 */
+  font-size: 15px;
+  line-height: 1.6;
+  margin-top: 6px;
+  margin-bottom: 4px;
+}

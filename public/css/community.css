@@ -322,7 +322,7 @@ body {
   margin: 10px 10px;
   width : 1200px; /* 필요 시 조절 */
   box-shadow : 0 4px 20px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
+  overflow-x: hidden;
 }
 
 .title-wrapper {
@@ -388,6 +388,9 @@ body {
   cursor: pointer;
   transition: background-color 0.3s;
 }
+
+
+
 
 .floating-btn:hover {
   background-color: #ffffffed;
