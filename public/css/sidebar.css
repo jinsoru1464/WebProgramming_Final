@@ -134,7 +134,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 1px;
 }
 
 .time-group {
@@ -150,8 +150,8 @@ body {
 }
 
 .time-cell {
-  width: 45px;
-  height: 45px;
+  width: 32px;
+  height: 32px;
   background-color: #e0e0e0;
   border-radius: 10px;
   font-weight: 600;
@@ -307,3 +307,6 @@ body {
   font-weight: 700;
 }
 
+.menu a:visited {
+  color: inherit;
+}

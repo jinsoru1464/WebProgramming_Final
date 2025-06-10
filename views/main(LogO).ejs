@@ -6,6 +6,7 @@
   <title>공공재 메인페이지</title>
   <link rel="stylesheet" href="/css/sidebar.css" />
   <link rel="stylesheet" href="/css/main(LogO).css" />
+  <link rel="icon" href="/images/reallogo 1.png" type="image/png" />
 </head>
 <body>
   <div class="container">
@@ -36,19 +37,19 @@
               <img src="/images/toggle.png" class="arrow-icon" />
             </div>
             <ul class="submenu">
-  <li><a href="/recruit_info" style="text-decoration: none; color: inherit;">공모전 정보</a></li>
+  <li><a href="/contest" style="text-decoration: none; color: inherit;">공모전 정보</a></li>
   <li><a href="/recruit" style="text-decoration: none; color: inherit;">공모전 팀원 모집</a></li>
 </ul>
 
           </li>
           <li>
-            <div class="menu-item">
-              <div class="left">
-                <img src="/images/human.png" class="icon" alt="포트폴리오" />
-                <span>나의 포트폴리오</span>
-              </div>
-            </div>
-          </li>
+  <a href="/portfolio/<%= user.id %>" class="menu-item">
+    <div class="left">
+      <img src="/images/human.png" class="icon" alt="포트폴리오" />
+      <span>나의 포트폴리오</span>
+    </div>
+  </a>
+</li>
           <li class="dropdown">
             <div class="menu-item dropdown-toggle">
               <div class="left">
@@ -58,10 +59,12 @@
               <img src="/images/toggle.png" class="arrow-icon" />
             </div>
             <ul class="submenu">
-              <li>스터디원 모집</li>
-              <li>Q&A</li>
-              <li>공모전 후기</li>
-            </ul>
+              <li><a href="/community" style="text-decoration: none; color: inherit;">커뮤니티</a></li>
+  <li><a href="/community?category=스터디원 모집" style="text-decoration: none; color: inherit;">스터디원 모집</a></li>
+  <li><a href="/community?category=Q%26A" style="text-decoration: none; color: inherit;">Q&A</a></li>
+  <li><a href="/community?category=공모전 후기" style="text-decoration: none; color: inherit;">공모전 후기</a></li>
+</ul>
+
           </li>
           <li class="timer-menu">
             <div class="menu-item">
@@ -73,6 +76,11 @@
 
             <div class="timer-layout">
               <div class="timer-blocks">
+                <div class="time-group">
+                  <div class="time-cell" id="hourTens">0</div>
+                  <div class="time-cell" id="hourOnes">0</div>
+                </div>
+                <div class="colon">:</div>
                 <div class="time-group">
                   <div class="time-cell" id="minuteTens">0</div>
                   <div class="time-cell" id="minuteOnes">0</div>
@@ -123,7 +131,8 @@
       <div class="buttons">
         <div class="buttons">
   <button class="btn main-btn" onclick="location.href='/contest'">공모전 참여하기</button>
-  <button class="btn main-btn" onclick="location.href='/study'">스터디 참여하기</button>
+  <button class="btn main-btn" onclick="location.href='/community?category=스터디원 모집'">스터디 참여하기</button>
+
 </div>
 
       </div>

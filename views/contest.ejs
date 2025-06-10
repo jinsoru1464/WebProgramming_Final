@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Contest Page</title>
+  <link rel="stylesheet" href="/css/contest.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo-area">
+        <a href="/main">
+          <img src="/images/reallogo 1.png" alt="공공재 로고" class="logo" />
+        </a>
+      </div>
+
+      <nav>
+        <ul class="menu">
+          <li class="<%= currentPath === '/main' || currentPath === '/' ? 'active' : '' %>">
+            <a href="/main" class="menu-item">
+              <div class="left">
+                <img src="/images/<%= currentPath === '/main' || currentPath === '/' ? 'Home_Blue.png' : 'Home.png' %>" class="icon" alt="홈" />
+                <span>홈</span>
+              </div>
+            </a>
+          </li>
+
+          <!-- 공모전 페이지 -->
+          <li class="dropdown <%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'active' : '' %>">
+            <div class="menu-item dropdown-toggle">
+              <div class="left">
+                <img src="/images/<%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'Trophy_blue.png' : 'Trophy.png' %>" class="icon" alt="공모전" />
+                <span class="<%= currentPath.startsWith('/recruit') || currentPath === '/contest' ? 'submenu-highlight' : '' %>">공모전 페이지</span>
+              </div>
+              <img src="/images/toggle.png" class="arrow-icon" />
+            </div>
+            <ul class="submenu">
+              <li><a href="/contest" class="<%= currentPath === '/contest' ? 'active-submenu' : '' %>">공모전 정보</a></li>
+              <li><a href="/recruit" class="<%= currentPath === '/recruit' ? 'active-submenu' : '' %>">공모전 팀원 모집</a></li>
+            </ul>
+          </li>
+
+          <li>
+  <a href="/portfolio/<%= user.id %>" class="menu-item">
+    <div class="left">
+      <img src="/images/human.png" class="icon" alt="포트폴리오" />
+      <span>나의 포트폴리오</span>
+    </div>
+  </a>
+</li>
+          <li class="dropdown <%= currentPath.startsWith('/community') ? 'active' : '' %>">
+  <div class="menu-item dropdown-toggle">
+    <div class="left">
+      <img src="/images/<%= currentPath.startsWith('/community') ? 'Group_blue.png' : 'Group_human.png' %>" class="icon" alt="커뮤니티" />
+      <span class="<%= currentPath.startsWith('/community') ? 'submenu-highlight' : '' %>">커뮤니티</span>
+    </div>
+    <img src="/images/toggle.png" class="arrow-icon" />
+  </div>
+  <ul class="submenu">
+  <li>
+    <a href="/community" class="<%= decodeURIComponent(currentPath) === '/community' ? 'active-submenu' : '' %>">
+      커뮤니티
+    </a>
+  </li>
+  <li>
+    <a href="/community?category=스터디원 모집" class="<%= decodeURIComponent(currentPath).includes('스터디원 모집') ? 'active-submenu' : '' %>">
+      스터디원 모집
+    </a>
+  </li>
+  <li>
+    <a href="/community?category=Q%26A" class="<%= decodeURIComponent(currentPath).includes('Q&A') ? 'active-submenu' : '' %>">
+      Q&A
+    </a>
+  </li>
+  <li>
+    <a href="/community?category=공모전 후기" class="<%= decodeURIComponent(currentPath).includes('공모전 후기') ? 'active-submenu' : '' %>">
+      공모전 후기
+    </a>
+  </li>
+</ul>
+
+          <li class="timer-menu">
+            <div class="menu-item">
+              <div class="left">
+                <img id="timerIcon" src="/images/Timer.png" class="icon" alt="타이머" />
+                <span id="timerText">타이머</span>
+              </div>
+            </div>
+
+            <div class="timer-layout">
+              <div class="timer-blocks">
+                <div class="time-group">
+                  <div class="time-cell" id="hourTens">0</div>
+                  <div class="time-cell" id="hourOnes">0</div>
+                </div>
+                <div class="colon">:</div>
+                <div class="time-group">
+                  <div class="time-cell" id="minuteTens">0</div>
+                  <div class="time-cell" id="minuteOnes">0</div>
+                </div>
+                <div class="colon">:</div>
+                <div class="time-group">
+                  <div class="time-cell" id="secondTens">0</div>
+                  <div class="time-cell" id="secondOnes">0</div>
+                </div>
+              </div>
+
+              <div class="timer-controls">
+                <input type="text" class="keyword-input" placeholder="키워드" />
+                <div class="timer-buttons">
+                  <button class="start-btn"><img src="/images/Play.png" alt="시작" /></button>
+                  <button class="stop-btn"><img src="/images/Stop circle.png" alt="정지" /></button>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="recent-section">
+        <div class="recent-title">최근 학습</div>
+        <div class="recent-graph" id="recentGraph"></div>
+      </div>
+
+      <div class="logout-section">
+        <button class="logout-btn" onclick="location.href='/logout'">
+          <img src="/images/logOut.png" class="logout-icon" />
+          로그아웃
+        </button>
+      </div>
+    </aside>
+
+    <main>
+      <header id="contest_header">
+        <h1>Contest</h1>
+      </header>
+
+      <% if (userKeywords && userKeywords.length > 0) { %>
+  <div class="user_keywords">
+    <strong>추천 키워드:</strong>
+    <% userKeywords.forEach(function(keyword) { %>
+      <span class="keyword_tag clickable-keyword">
+        #<%= keyword %>
+        <span class="remove-btn" title="제거">×</span>
+      </span>
+    <% }); %>
+  </div>
+<% } %>
+
+
+      <!-- 추천 공모전 (3개) -->
+      <div class="contest_list">
+        <% if (!userKeywords || userKeywords.length === 0) { %>
+          <p style="margin: 20px; font-size: 1.2rem;">공부를 진행해 주세요!</p>
+        <% } else { %>
+          <% recommendedContests.forEach(function(contest) { %>
+            <div class="card_wrapper">
+              <div class="card_inner">
+                <div class="card_front">
+                  <img src="<%= contest.img_src %>" alt="포스터">
+                  <div class="card_tag">#<%= contest.info.분야 %></div>
+                  <div class="card_title"><%= contest.title %></div>
+                  <div class="card_dday">D-<%= contest.dday %></div>
+                </div>
+                <div class="card_back">
+                  <p>총 상금: <%= contest.prize %></p>
+                  <p>지원자격: <%= contest.info.응모대상 %></p>
+                  <p>주최: <%= contest.organizer %></p>
+                  <p>조회수: <%= contest.read_count %></p>
+                  <% if (contest.info.홈페이지) { %>
+                    <p><a href="<%= contest.info.홈페이지 %>" target="_blank">홈페이지</a></p>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        <% } %>
+      </div>
+
+      <!-- 버튼 그룹 + 검색 입력창 -->
+      <div class="contest_section">
+        <div class="btn_group">
+            <button class="filter_btn" data-filter="all">#전체</button>
+            <button class="filter_btn" data-filter="popular">#인기순</button>
+            <button class="filter_btn" data-filter="recent">#최신순</button>
+            <button class="filter_btn" data-filter="keyword">#키워드</button>
+
+          <!-- 검색 입력창 -->
+        <div id="keyword_search_box" class="keyword_search_box">
+            <input type="text" id="keywordInput" placeholder="키워드를 입력하세요">
+            <button id="searchBtn">검색</button>
+        </div>
+        </div>
+
+        <!-- 전체 공모전 리스트 -->
+        <div class="contest_list" id="allContestsList">
+          <% contests.forEach(function(contest) { %>
+            <div class="card_wrapper">
+              <div class="card_inner">
+                <div class="card_front">
+                  <img src="<%= contest.img_src %>" alt="포스터">
+                  <div class="card_tag">#<%= contest.info.분야 %></div>
+                  <div class="card_title"><%= contest.title %></div>
+                  <div class="card_dday">D-<%= contest.dday %></div>
+                </div>
+                <div class="card_back">
+                  <p>총 상금: <%= contest.prize %></p>
+                  <p>지원자격: <%= contest.info.응모대상 %></p>
+                  <p>주최: <%= contest.organizer %></p>
+                  <p>조회수: <%= contest.read_count %></p>
+                  <% if (contest.info.홈페이지) { %>
+                    <p><a href="<%= contest.info.홈페이지 %>" target="_blank">홈페이지</a></p>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+
+          
+        </div>
+
+        <div class="pagination">
+  <% if (currentPage > 1) { %>
+    <a href="/contest?page=<%= currentPage - 1 %>">
+      <button class="page-btn">&lt;</button>
+    </a>
+  <% } %>
+
+  <% for(let i = 1; i <= totalPages; i++) { %>
+    <a href="/contest?page=<%= i %>">
+      <button class="page-btn <%= currentPage === i ? 'active' : '' %>">
+        <%= i %>
+      </button>
+    </a>
+  <% } %>
+
+  <% if (currentPage < totalPages) { %>
+    <a href="/contest?page=<%= currentPage + 1 %>">
+      <button class="page-btn">&gt;</button>
+    </a>
+  <% } %>
+</div>
+      </div>
+      
+    </main>
+  </div>
+<script src="/js/sidebar.js"></script>
+<script>
+let currentFilter = 'all';
+let currentKeyword = '';
+const originalKeywords = JSON.parse('<%- JSON.stringify(userKeywords || []) %>');
+let currentRecommendedKeywords = originalKeywords.slice(0, 3); // 최대 3개 노출
+
+function toggleKeywordSearchBox() {
+  $('#keyword_search_box').toggle();
+  $('#keywordInput').val('').focus();
+
+  if (!$('#keyword_search_box').is(':visible')) {
+    currentFilter = 'all';
+    currentKeyword = '';
+    $.get('/contest/filter', { filter: 'all', page: 1 }, function(res){
+      renderContests(res.contests, true);
+      updatePagination(res.currentPage, res.totalPages);
+    });
+  }
+}
+
+function renderContests(contests, animate = true) {
+  const container = $('#allContestsList');
+
+  if (animate) {
+    container.removeClass('fade-in').addClass('fade-out');
+    setTimeout(() => {
+      updateContestHtml(container, contests);
+      container.removeClass('fade-out').addClass('fade-in');
+      setTimeout(() => container.removeClass('fade-in'), 400);
+    }, 400);
+  } else {
+    updateContestHtml(container, contests);
+  }
+}
+
+function updateContestHtml(container, contests){
+  let html = '';
+
+  if (contests.length === 0) {
+    html = `<div class="no-results" style="width: 100%; min-height: 300px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #888;">검색 결과가 없습니다.</div>`;
+  } else {
+    contests.forEach(contest => {
+      const info = contest.info || {};
+      html += `
+        <div class="card_wrapper">
+          <div class="card_inner">
+            <div class="card_front">
+              <img src="${contest.img_src}" alt="포스터">
+              <div class="card_tag">#${info['분야'] || ''}</div>
+              <div class="card_title">${contest.title}</div>
+              <div class="card_dday">D-${contest.dday}</div>
+            </div>
+            <div class="card_back">
+              <p>총 상금: ${contest.prize || '정보없음'}</p>
+              <p>지원자격: ${info['응모대상'] || '정보없음'}</p>
+              <p>주최: ${contest.organizer || '정보없음'}</p>
+              <p>조회수: ${contest.read_count}</p>
+              ${info['홈페이지'] ? `<p><a href="${info['홈페이지']}" target="_blank">홈페이지</a></p>` : ''}
+            </div>
+          </div>
+        </div>`;
+    });
+  }
+
+  container.html(html);
+}
+
+function updatePagination(currentPage, totalPages) {
+  const container = $('.pagination');
+  let html = '';
+
+  if (currentPage > 1) {
+    html += `<button class="page-btn" data-page="${currentPage - 1}">&lt;</button>`;
+  }
+
+  for (let i = 1; i <= totalPages; i++) {
+    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+  }
+
+  if (currentPage < totalPages) {
+    html += `<button class="page-btn" data-page="${currentPage + 1}">&gt;</button>`;
+  }
+
+  container.html(html);
+}
+
+function renderKeywordTags() {
+  const container = $('.user_keywords');
+
+  if (currentRecommendedKeywords.length === 0) {
+    container.html('<p style="margin-left: 10px; color: #888;">추천 키워드가 없습니다.</p>');
+    return;
+  }
+
+  let html = '<strong>추천 키워드:</strong>';
+  currentRecommendedKeywords.forEach(keyword => {
+    html += `
+      <span class="keyword_tag clickable-keyword">
+        #${keyword} 
+        <span class="remove-btn" title="제거">×</span>
+      </span>`;
+  });
+  container.html(html);
+}
+
+
+function renderRecommendedContests(list) {
+  const container = $('.contest_list').first();
+  let html = '';
+
+  if (list.length === 0) {
+    html = `<p style="margin: 20px; font-size: 1.2rem;">추천 키워드에 맞는 공모전이 없습니다.</p>`;
+  } else {
+    list.forEach(contest => {
+      html += `
+        <div class="card_wrapper">
+          <div class="card_inner">
+            <div class="card_front">
+              <img src="${contest.img_src}" alt="포스터">
+              <div class="card_tag">#${contest.info.분야}</div>
+              <div class="card_title">${contest.title}</div>
+              <div class="card_dday">D-${contest.dday}</div>
+            </div>
+            <div class="card_back">
+              <p>총 상금: ${contest.prize}</p>
+              <p>지원자격: ${contest.info.응모대상}</p>
+              <p>주최: ${contest.organizer}</p>
+              <p>조회수: ${contest.read_count}</p>
+              ${contest.info.홈페이지 ? `<p><a href="${contest.info.홈페이지}" target="_blank">홈페이지</a></p>` : ''}
+            </div>
+          </div>
+        </div>`;
+    });
+  }
+
+  container.html(html);
+}
+
+$(document).ready(function(){
+  $('#keyword_search_box').hide();
+
+  $(document).on('click', '.card_wrapper', function(){
+    $(this).toggleClass('flipped');
+  });
+
+  $(document).on('click', '.filter_btn', function(){
+    const filterType = $(this).data('filter');
+    currentFilter = filterType;
+    currentKeyword = '';
+
+    if (filterType === 'keyword') {
+      toggleKeywordSearchBox();
+    } else {
+      $('#keyword_search_box').hide();
+      $.get('/contest/filter', { filter: currentFilter, page: 1 }, function(res){
+        renderContests(res.contests, false);
+        updatePagination(res.currentPage, res.totalPages);
+      });
+    }
+  });
+
+  // ✅ 키워드 제거 시 다음 키워드 자동 보충
+  let removedKeywords = [];
+
+$(document).on('click', '.remove-btn', function (e) {
+  e.stopPropagation();
+  const text = $(this).closest('.keyword_tag').text().replace('#', '').replace('×', '').trim();
+
+  // 제거 목록에 추가
+  removedKeywords.push(text);
+
+  // 현재 추천 키워드에서 제거
+  currentRecommendedKeywords = currentRecommendedKeywords.filter(k => k !== text);
+
+  // 서버에 요청 (removed 전달)
+  $.get('/contest/recommend', {
+  removed: removedKeywords.join(',')
+}, function (res) {
+  currentRecommendedKeywords = res.usedKeywords || [];
+  renderKeywordTags();
+  renderRecommendedContests(res.contests || []);
+});
+
+});
+
+
+
+  $(document).on('click', '#searchBtn', function(){
+    const keyword = $('#keywordInput').val().trim();
+    currentFilter = keyword === '' ? 'all' : 'keyword';
+    currentKeyword = keyword;
+
+    $.get('/contest/filter', { filter: currentFilter, keyword: currentKeyword, page: 1 }, function(res){
+      renderContests(res.contests, false);
+      updatePagination(res.currentPage, res.totalPages);
+    });
+  });
+
+  $(document).on('click', '.page-btn', function(){
+    const page = $(this).data('page');
+
+    $.get('/contest/filter', {
+      filter: currentFilter,
+      keyword: currentKeyword,
+      page
+    }, function(res){
+      renderContests(res.contests, false);
+      updatePagination(res.currentPage, res.totalPages);
+    });
+  });
+});
+</script>
+
+
+
+</body>
+</html>
