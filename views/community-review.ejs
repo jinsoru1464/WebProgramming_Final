@@ -172,38 +172,41 @@
         </div>
 
         <div class="pagination">
-          <% if (currentPage > 1) { %>
-              <a href="/?page=<%= currentPage - 1 %>" class="page-arrow">&laquo;</a>
-          <% } else { %>
-              <span class="page-arrow disabled">&laquo;</span>
-          <% } %>
-      
-          <% for (let i = 1; i <= totalPages; i++) { %>
-              <a href="/?page=<%= i %>" class="page-num <%= currentPage === i ? 'active' : '' %>"><%= i %></a>
-          <% } %>
-      
-          <% if (currentPage < totalPages) { %>
-              <a href="/?page=<%= currentPage + 1 %>" class="page-arrow">&raquo;</a>
-          <% } else { %>
-              <span class="page-arrow disabled">&raquo;</span>
-          <% } %>
-      </div>      
+  <% if (groupStart > 1) { %>
+    <a href="/community?category=<%= category %>&page=<%= groupStart - 1 %>">
+      <button class="page-btn">&lt;</button>
+    </a>
+  <% } %>
 
-        <div class="button-floating">
-          <button
-            class="floating-btn menu-btn"
-            data-title="Contest Member Recruitment"
-          >
-            스터디원 모집
-          </button>
-          <button class="floating-btn menu-btn" data-title="Q&A">Q&A</button>
-          <button class="floating-btn menu-btn" data-title="Contest Review">
-            공모전 후기
-          </button>
-          <a href="/community_write" class="write-btn">글쓰기</a>
-        </div>
-      </main>
-    </div>
+  <% for (let i = groupStart; i <= groupEnd; i++) { %>
+    <a href="/community?category=<%= category %>&page=<%= i %>">
+      <button class="page-btn <%= currentPage === i ? 'active' : '' %>"><%= i %></button>
+    </a>
+  <% } %>
+
+  <% if (groupEnd < totalPages) { %>
+    <a href="/community?category=<%= category %>&page=<%= groupEnd + 1 %>">
+      <button class="page-btn">&gt;</button>
+    </a>
+  <% } %>
+</div>
+
+
+
+
+
+        <div class="fab-container">
+  <div class="fab-menu">
+    <a href="/community_write" class="fab-sub">✏️ 글쓰기</a>
+    <a href="/community?category=스터디원 모집" class="fab-sub">스터디원 모집</a>
+    <a href="/community?category=Q%26A" class="fab-sub">Q&A</a>
+    <a href="/community?category=공모전 후기" class="fab-sub">공모전 후기</a>
+    <a href="/community" class="fab-sub">전체</a>
+  </div>
+  <button class="fab-main" id="fabToggle">+</button>
+</div>
+
+
 <script src="/js/sidebar.js"></script>
   </body>
 </html>

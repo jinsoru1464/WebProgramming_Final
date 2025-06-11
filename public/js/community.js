@@ -1,4 +1,3 @@
-// ✅ community.js 수정용 리팩토링 (경로 통일)
 document.addEventListener("DOMContentLoaded", () => {
   const nav = document.querySelector(".cr-menu nav");
   const buttons = document.querySelectorAll(".menu-btn");
@@ -8,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const contestBtn = document.getElementById("contestBtn");
   const studyBtn = document.getElementById("studyBtn");
   const mainLogo = document.getElementById("mainLogo");
+  const fabContainer = document.querySelector('.fab-container');
+  const fabToggleBtn = document.getElementById('fabToggle');
 
   let activeButton = null;
 
@@ -17,7 +18,14 @@ document.addEventListener("DOMContentLoaded", () => {
     "공모전 후기": "공모전 후기",
   };
 
-  // 🔹 메뉴 버튼 클릭 시 동작
+  // 🔹 플로팅 버튼 토글
+  if (fabToggleBtn && fabContainer) {
+    fabToggleBtn.addEventListener("click", () => {
+      fabContainer.classList.toggle("active");
+    });
+  }
+
+  // 🔹 메뉴 버튼 클릭 → 페이지 이동
   buttons.forEach((btn) => {
     btn.addEventListener("click", function (e) {
       e.preventDefault();
@@ -36,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // 🔹 메뉴 외 클릭 시 버튼 active 해제
   document.addEventListener("click", function (e) {
     const isInsideNav = nav?.contains(e.target);
     if (!isInsideNav && activeButton) {
@@ -44,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 🔹 로고 및 버튼 처리
+  // 🔹 로고 및 로그인/회원가입 버튼 처리
   if (loginBtn) loginBtn.addEventListener("click", () => window.location.href = "/login");
   if (signUpBtn) signUpBtn.addEventListener("click", () => window.location.href = "/signUp");
   if (contestBtn) contestBtn.addEventListener("click", () => window.location.href = "/login");

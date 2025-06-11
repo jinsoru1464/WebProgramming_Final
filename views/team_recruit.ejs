@@ -177,30 +177,31 @@
 </ul>
 
 
-          <!-- ✅ 페이지네이션 -->
-          <div class="pagination">
-            <a href="/recruit?page=<%= currentPage - 1 %>">
-              <button class="page-btn" <%= currentPage <= 1 ? 'disabled' : '' %>>
-                <i class="fas fa-arrow-left"></i>
-              </button>
-            </a>
+<!-- ✅ community 스타일 pagination 적용 -->
+<div class="pagination">
+  <% if (groupStart > 1) { %>
+    <a href="/recruit?page=<%= groupStart - 1 %>">
+      <button class="page-btn">&lt;</button>
+    </a>
+  <% } %>
 
-            <% for(let i = 1; i <= totalPages; i++) { %>
-              <a href="/recruit?page=<%= i %>">
-                <button class="page-btn <%= currentPage === i ? 'active' : '' %>">
-                  <%= i.toString().padStart(2, '0') %>
-                </button>
-              </a>
-            <% } %>
+  <% for (let i = groupStart; i <= groupEnd; i++) { %>
+    <a href="/recruit?page=<%= i %>">
+      <button class="page-btn <%= currentPage === i ? 'active' : '' %>"><%= i %></button>
+    </a>
+  <% } %>
 
-            <% if (currentPage < totalPages) { %>
-              <a href="/recruit?page=<%= currentPage + 1 %>">
-                <button class="page-btn">
-                  <i class="fas fa-arrow-right"></i>
-                </button>
-              </a>
-            <% } %>
-          </div>
+  <% if (groupEnd < totalPages) { %>
+    <a href="/recruit?page=<%= groupEnd + 1 %>">
+      <button class="page-btn">&gt;</button>
+    </a>
+  <% } %>
+</div>
+
+
+
+
+
         </div>
 
       </div>
