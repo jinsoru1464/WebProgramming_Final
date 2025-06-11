@@ -86,10 +86,11 @@ stopBtn?.addEventListener('click', () => {
   const block = document.createElement('div');
   block.className = 'block';
   block.title = `${keyword} - ${displayTime}`;
-  const ratio = Math.min(1, seconds / 3600);
-const shade = Math.floor(150 + 105 * ratio);  // 동일한 방식
+  const max = 14400; // 4시간 = 14400초
+const ratio = Math.min(1, seconds / max); // 0~1
+const lightness = 95 - (50 * ratio); // 95% → 45%로 줄어듦
+block.style.backgroundColor = `hsl(120, 100%, ${lightness}%)`;
 
-block.style.backgroundColor = `rgb(${255 - shade}, 255, ${255 - shade})`;
 
 
   if (recentGraph.children.length >= 5) {
@@ -146,11 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const minutes = Math.floor(duration_seconds / 60);
         const seconds = duration_seconds % 60;
         block.title = `${keyword} - ${minutes}분 ${seconds}초`;
-        // 최대 1시간 = 3600초 기준으로 비율 계산
-        const ratio = Math.min(1, seconds / 3600);
-        const shade = Math.floor(150 + 105 * ratio);  // 150~255 사이
+        
+        const ratio = Math.min(1, duration_seconds / 14400);
+        const lightness = 95 - (50 * ratio);
+        block.style.backgroundColor = `hsl(120, 100%, ${lightness}%)`;
 
-        block.style.backgroundColor = `rgb(${255 - shade}, 255, ${255 - shade})`;
 
         recentGraph.appendChild(block);
       });
@@ -163,6 +164,3 @@ document.querySelector('.logout-btn')?.addEventListener('click', () => {
   localStorage.removeItem('timerStartTime');  // ✅ 타이머만 삭제
   window.location.href = "/logout";           // 서버에서 쿠키 삭제
 });
-
-
-

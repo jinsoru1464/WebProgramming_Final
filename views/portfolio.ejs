@@ -158,13 +158,13 @@
 
           <div class="user-photo-skill">
             <div class="photo-box">
-  <% if (!profileImage || profileImage === 'default.png') { %>
-  <p class="no-image-msg">이미지가 없습니다<br />프로필 이미지를 추가해주세요</p>
-<% } else { %>
-  <img id="profilePreview" src="/uploads/<%= profileImage %>" alt="프로필 이미지" />
-<% } %>
+                <% if (!profileImage || profileImage === 'default.png') { %>
+                  <p class="no-image-msg">이미지가 없습니다<br />프로필 이미지를 추가해주세요</p>
+                <% } else { %>
+                  <img id="profilePreview" src="/uploads/<%= profileImage %>" alt="프로필 이미지" />
+                <% } %>
 
-</div>
+            </div>
 
 
             <div class="skills-section">
@@ -279,7 +279,7 @@
   });
 
   const today = new Date();
-  const days = 84;
+  const days = 88;
   let currentColumn = null;
 
   for (let i = 0; i < days; i++) {

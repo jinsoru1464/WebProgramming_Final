@@ -125,20 +125,20 @@ function toKSTString(date) {
         );
 
         // 날짜별 누적
-await db.execute(
-  `INSERT INTO daily_study_summary (user_id, study_date, total_seconds)
-   VALUES (?, CURDATE(), ?)
-   ON DUPLICATE KEY UPDATE total_seconds = total_seconds + ?`,
-  [userId, seconds, seconds]
-);
+        await db.execute(
+          `INSERT INTO daily_study_summary (user_id, study_date, total_seconds)
+          VALUES (?, CURDATE(), ?)
+          ON DUPLICATE KEY UPDATE total_seconds = total_seconds + ?`,
+          [userId, seconds, seconds]
+        );
 
-// 키워드별 누적
-await db.execute(
-  `INSERT INTO keyword_study_summary (user_id, keyword, total_seconds)
-   VALUES (?, ?, ?)
-   ON DUPLICATE KEY UPDATE total_seconds = total_seconds + ?`,
-  [userId, keyword, seconds, seconds]
-);
+        // 키워드별 누적
+        await db.execute(
+          `INSERT INTO keyword_study_summary (user_id, keyword, total_seconds)
+          VALUES (?, ?, ?)
+          ON DUPLICATE KEY UPDATE total_seconds = total_seconds + ?`,
+          [userId, keyword, seconds, seconds]
+        );
         res.status(201).json({ message: '타이머 기록 저장 완료' });
       } catch (err) {
         console.error('❌ 타이머 저장 오류:', err);
@@ -169,17 +169,31 @@ await db.execute(
 
     // ✅ 파일 업로드(multer)
     const storage = multer.diskStorage({
-      destination: (req, file, cb) => {
-        const uploadPath = path.join(__dirname, 'public', 'uploads');
-        if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
-        cb(null, uploadPath);
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-      }
-    });
-    const upload = multer({ storage });
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(__dirname, 'public', 'uploads');
+    if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+// ✅ 파일 확장자 필터 추가
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+  const ext = path.extname(file.originalname).toLowerCase();
+
+  if (allowedTypes.includes(ext)) {
+    cb(null, true);
+  } else {
+    cb(new Error('지원하지 않는 파일 형식입니다.'), false);
+  }
+};
+
+const upload = multer({ storage, fileFilter });
+
 
     // ✅ 팀원 모집 글쓰기 폼
     app.get('/recruit/write', authenticateToken, (req, res) => {
@@ -206,42 +220,42 @@ await db.execute(
 
     // ✅ 글 목록 조회
     app.get('/recruit', authenticateToken, async (req, res) => {
-  const currentPage = parseInt(req.query.page) || 1;
-  const postsPerPage = 10;
-  const offset = (currentPage - 1) * postsPerPage;
+      const currentPage = parseInt(req.query.page) || 1;
+      const postsPerPage = 10;
+      const offset = (currentPage - 1) * postsPerPage;
 
-  try {
-    const [[{ count }]] = await db.execute(`SELECT COUNT(*) AS count FROM recruit_posts`);
-    const totalPages = Math.ceil(count / postsPerPage);
+      try {
+        const [[{ count }]] = await db.execute(`SELECT COUNT(*) AS count FROM recruit_posts`);
+        const totalPages = Math.ceil(count / postsPerPage);
 
-    const [posts] = await db.execute(`
-      SELECT rp.*, u.nickname AS author 
-      FROM recruit_posts rp
-      JOIN users u ON rp.user_id = u.id
-      ORDER BY rp.created_at DESC
-      LIMIT ${postsPerPage} OFFSET ${offset}
-    `);
+        const [posts] = await db.execute(`
+          SELECT rp.*, u.nickname AS author 
+          FROM recruit_posts rp
+          JOIN users u ON rp.user_id = u.id
+          ORDER BY rp.created_at DESC
+          LIMIT ${postsPerPage} OFFSET ${offset}
+        `);
 
-    // ✅ 페이지네이션 그룹 계산
-    const groupSize = 10;
-    const currentGroup = Math.floor((currentPage - 1) / groupSize);
-    const groupStart = currentGroup * groupSize + 1;
-    const groupEnd = Math.min(groupStart + groupSize - 1, totalPages);
+        // ✅ 페이지네이션 그룹 계산
+        const groupSize = 10;
+        const currentGroup = Math.floor((currentPage - 1) / groupSize);
+        const groupStart = currentGroup * groupSize + 1;
+        const groupEnd = Math.min(groupStart + groupSize - 1, totalPages);
 
-    res.render('team_recruit', {
-      posts,
-      currentPage,
-      totalPages,
-      groupStart,
-      groupEnd,
-      user: req.user,
-      currentPath: req.originalUrl
-    });
-  } catch (err) {
-    console.error('❌ 팀원 모집 페이지 오류:', err);
-    res.status(500).send('서버 오류');
-  }
-});
+        res.render('team_recruit', {
+          posts,
+          currentPage,
+          totalPages,
+          groupStart,
+          groupEnd,
+          user: req.user,
+          currentPath: req.originalUrl
+        });
+      } catch (err) {
+        console.error('❌ 팀원 모집 페이지 오류:', err);
+        res.status(500).send('서버 오류');
+      }
+  });
 
 
     // ✅ 글 상세 보기
@@ -258,20 +272,18 @@ await db.execute(
 
                 // ✅ 댓글 목록 가져오기 추가
           const [comments] = await db.execute(`
-  SELECT rc.*, u.nickname AS author
-  FROM recruit_comments rc
-  JOIN users u ON rc.user_id = u.id
-  WHERE rc.post_id = ?
-  ORDER BY rc.created_at ASC
-`, [postId]);
+          SELECT rc.*, u.nickname AS author
+          FROM recruit_comments rc
+          JOIN users u ON rc.user_id = u.id
+          WHERE rc.post_id = ?
+          ORDER BY rc.created_at ASC
+      `, [postId]);
 
-// ✅ created_at → created_at_kst 필드 추가
-comments.forEach(comment => {
-  comment.created_at_kst = toKSTString(comment.created_at);
-});
-
-
-        if (!post) return res.status(404).send('게시글을 찾을 수 없습니다.');
+      // ✅ created_at → created_at_kst 필드 추가
+      comments.forEach(comment => {
+        comment.created_at_kst = toKSTString(comment.created_at);
+      });
+      if (!post) return res.status(404).send('게시글을 찾을 수 없습니다.');
 
         res.render('team_recruit_detail', {
           post,
@@ -387,7 +399,7 @@ app.delete('/recruit/:postId/comments/:commentId', authenticateToken, async (req
 
 // 커뮤니티 목록 페이지
 app.get('/community', authenticateToken, async (req, res) => {
-  const category = req.query.category || ''; // 기본값을 빈 문자열로 설정
+  const category = req.query.category || ''; 
   const currentPage = parseInt(req.query.page) || 1;
   const postsPerPage = 6;
   const offset = (currentPage - 1) * postsPerPage;
@@ -629,30 +641,30 @@ app.delete('/community/:postId/comments/:commentId', authenticateToken, async (r
 
       // 🔹 추천 공모전 (조회수 기준 상위 3개)
       // ✅ 공부 키워드 가져오기
-const [keywords] = await db.execute(
-  `SELECT keyword FROM keyword_study_summary WHERE user_id = ? ORDER BY total_seconds DESC LIMIT 3`,
-  [req.user.id]
-);
+      const [keywords] = await db.execute(
+        `SELECT keyword FROM keyword_study_summary WHERE user_id = ? ORDER BY total_seconds DESC LIMIT 3`,
+        [req.user.id]
+      );
 
-let userKeywords = keywords.map(k => k.keyword);
+      let userKeywords = keywords.map(k => k.keyword);
 
-// ✅ 키워드 기반 추천 공모전 (최대 3개 키워드 OR fallback)
-let recommendedRows = [];
+      // ✅ 키워드 기반 추천 공모전 (최대 3개 키워드 OR fallback)
+      let recommendedRows = [];
 
-if (userKeywords.length > 0) {
-  const keywordConditions = userKeywords.map(() => `분야 LIKE ?`).join(' OR ');
-  const keywordParams = userKeywords.map(k => `%${k}%`);
+      if (userKeywords.length > 0) {
+        const keywordConditions = userKeywords.map(() => `분야 LIKE ?`).join(' OR ');
+        const keywordParams = userKeywords.map(k => `%${k}%`);
 
-  [recommendedRows] = await db.execute(
-    `SELECT * FROM contests WHERE ${keywordConditions} ORDER BY read_count DESC LIMIT 3`,
-    keywordParams
-  );
-} else {
-  // 공부 키워드 없을 경우 fallback
-  [recommendedRows] = await db.execute(
-    `SELECT * FROM contests ORDER BY read_count DESC LIMIT 3`
-  );
-}
+        [recommendedRows] = await db.execute(
+          `SELECT * FROM contests WHERE ${keywordConditions} ORDER BY read_count DESC LIMIT 3`,
+          keywordParams
+        );
+      } else {
+      // 공부 키워드 없을 경우 fallback
+      [recommendedRows] = await db.execute(
+        `SELECT * FROM contests ORDER BY read_count DESC LIMIT 3`
+      );
+    }
 
 
       // 🔹 전체 개수
@@ -660,12 +672,9 @@ if (userKeywords.length > 0) {
       const totalPages = Math.ceil(count / perPage);
 
       // 🔹 페이징된 공모전 목록
-  const [allContests] = await db.execute(
-    `SELECT * FROM contests ORDER BY id ASC LIMIT ${offset}, ${perPage}`
-  );
-
-
-
+      const [allContests] = await db.execute(
+        `SELECT * FROM contests ORDER BY id ASC LIMIT ${offset}, ${perPage}`
+      );
       const processContests = (list) => {
         return list.map(contest => {
           const dday = calculateDday(contest.접수마감일);
@@ -682,19 +691,17 @@ if (userKeywords.length > 0) {
           };
         });
       };
-
-
       const groupSize = 10;
-const currentGroup = Math.floor((page - 1) / groupSize);
-const groupStart = currentGroup * groupSize + 1;
-const groupEnd = Math.min(groupStart + groupSize - 1, totalPages);
+      const currentGroup = Math.floor((page - 1) / groupSize);
+      const groupStart = currentGroup * groupSize + 1;
+      const groupEnd = Math.min(groupStart + groupSize - 1, totalPages);
 
       res.render('contest', {
         recommendedContests: processContests(recommendedRows),
         contests: processContests(allContests),
         currentPage: page,
         totalPages,
-        groupStart,       // 👈 추가
+        groupStart,       
         groupEnd,  
         currentPath: req.path,
         allKeywords: [],
@@ -720,30 +727,28 @@ const groupEnd = Math.min(groupStart + groupSize - 1, totalPages);
       let whereParams = [];
       let orderBy = '';
 
-if (filter === 'all') {
-  orderBy = 'ORDER BY id ASC'; // ← 기본 정렬
-} else if (filter === 'keyword' && keyword) {
-  whereClause = 'WHERE 분야 LIKE ?';
-  whereParams.push(`%${keyword}%`);
-  orderBy = 'ORDER BY id DESC'; // 키워드 검색은 최신순으로
-} else if (filter === 'popular') {
-  orderBy = 'ORDER BY read_count DESC';
-} else if (filter === 'recent') {
-  orderBy = 'ORDER BY created_at DESC';
-} else {
-  orderBy = 'ORDER BY id DESC'; // 기본 fallback
-}
-
-
+    if (filter === 'all') {
+      orderBy = 'ORDER BY id ASC'; 
+    } else if (filter === 'keyword' && keyword) {
+      whereClause = 'WHERE 분야 LIKE ?';
+      whereParams.push(`%${keyword}%`);
+      orderBy = 'ORDER BY id DESC'; 
+    } else if (filter === 'popular') {
+      orderBy = 'ORDER BY read_count DESC';
+    } else if (filter === 'recent') {
+      orderBy = 'ORDER BY created_at DESC';
+    } else {
+      orderBy = 'ORDER BY id DESC'; 
+    }
 
       const countQuery = `SELECT COUNT(*) AS count FROM contests ${whereClause}`;
       const [[{ count }]] = await db.execute(countQuery, whereParams);
       const totalPages = Math.ceil(count / perPage);
 
       const groupSize = 10;
-const currentGroup = Math.floor((page - 1) / groupSize);
-const groupStart = currentGroup * groupSize + 1;
-const groupEnd = Math.min(groupStart + groupSize - 1, totalPages);
+      const currentGroup = Math.floor((page - 1) / groupSize);
+      const groupStart = currentGroup * groupSize + 1;
+      const groupEnd = Math.min(groupStart + groupSize - 1, totalPages);
 
       // ✅ LIMIT 직접 넣기
       const listQuery = `SELECT * FROM contests ${whereClause} ${orderBy} LIMIT ${offset}, ${perPage}`;
@@ -766,7 +771,7 @@ const groupEnd = Math.min(groupStart + groupSize - 1, totalPages);
 
       res.json({
         contests: result,
-        groupStart,       // 👈 추가
+        groupStart,       
         groupEnd, 
         currentPage: page,
         totalPages
@@ -846,15 +851,15 @@ app.get('/portfolio/:id', authenticateToken, async (req, res) => {
     // ✅ 날짜를 문자열로 바로 변환해서 가져옴 (타임존 문제 해결)
     const [dailyRows] = await db.execute(
       `SELECT DATE_FORMAT(study_date, '%Y-%m-%d') AS study_date, total_seconds 
-       FROM daily_study_summary 
-       WHERE user_id = ?`,
+      FROM daily_study_summary 
+      WHERE user_id = ?`,
       [userId]
     );
 
     const [keywordRows] = await db.execute(
-  `SELECT keyword, total_seconds 
-   FROM keyword_study_summary 
-   WHERE user_id = ?`,
+      `SELECT keyword, total_seconds 
+      FROM keyword_study_summary 
+      WHERE user_id = ?`,
   [userId]
 );
 
