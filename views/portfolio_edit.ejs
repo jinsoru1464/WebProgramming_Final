@@ -155,20 +155,33 @@
           </div>
         
           <div class="user-photo-skill">
-              <div class="photo-box" onclick="document.getElementById('profileInput').click()">
-                <% if (profileImage) { %>
-                <img id="profilePreview" src="/uploads/<%= profileImage %>" alt="프로필 이미지"/>
-                <% } else { %>
-                  <img
-                    id="profilePreview"
-                    src=""
-                    alt="프로필 이미지"
-                    style="display: none;"
-                  />
-                  <div id="photoPlaceholder" class="photo-placeholder">+</div>
-                <% } %>
-                <input type="file" id="profileInput" name="profileImage" accept="image/*" style="display: none;" />
-              </div>
+              <div class="photo-container">
+  <div class="photo-box" onclick="document.getElementById('profileInput').click()">
+    <% if (profileImage && profileImage !== 'default.png') { %>
+      <img id="profilePreview" src="/uploads/<%= profileImage %>" alt="프로필 이미지" />
+      <div class="delete-overlay" id="deleteImageBtn">×</div>
+    <% } else { %>
+      <img id="profilePreview" src="" style="display: none;" />
+    <% } %>
+
+    <!-- 문구와 placeholder는 무조건 렌더링 -->
+    <div id="photoPlaceholder" class="photo-placeholder" style="<%= profileImage && profileImage !== 'default.png' ? 'display: none;' : 'display: flex;' %>">
+      <div class="plus-icon">+</div>
+      <p class="no-image-msg">이미지가 없습니다<br />프로필 이미지를 추가해주세요</p>
+    </div>
+
+    <input type="hidden" name="deleteImage" id="deleteImage" value="false" />
+    <input type="file" id="profileInput" name="profileImage" accept="image/*" style="display: none;" />
+  </div>
+</div>
+
+
+
+
+
+
+
+
 
           
             <div class="skills-section">
@@ -287,7 +300,32 @@
 
   window.studyData = studyData;
   window.keywordData = keywordData;
+
+  // 이미지 삭제 버튼 클릭 시 동작
+ document.addEventListener('DOMContentLoaded', () => {
+  const deleteBtn = document.getElementById('deleteImageBtn');
+  const preview = document.getElementById('profilePreview');
+  const placeholder = document.getElementById('photoPlaceholder');
+  const noImageMsg = document.querySelector('.no-image-msg');
+  const deleteInput = document.getElementById('deleteImage');
+
+  deleteBtn?.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (confirm('정말 이미지를 삭제하시겠습니까?')) {
+      if (preview) preview.style.display = 'none';
+      if (placeholder) placeholder.style.display = 'flex';
+      if (noImageMsg) noImageMsg.style.display = 'block'; // ✅ 문구도 보이게
+      if (deleteBtn) deleteBtn.style.display = 'none';
+      if (deleteInput) deleteInput.value = 'true';
+    }
+  });
+});
+
+
+
+
 </script>
+
 
 </body>
 </html>

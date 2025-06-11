@@ -158,12 +158,14 @@
 
           <div class="user-photo-skill">
             <div class="photo-box">
-              <% if (profileImage) { %>
-                <img id="profilePreview" src="/uploads/<%= profileImage %>" alt="프로필 이미지" />
-              <% } else { %>
-                <img id="profilePreview" src="/images/default.png" alt="기본 이미지" />
-              <% } %>
-            </div>
+  <% if (!profileImage || profileImage === 'default.png') { %>
+  <p class="no-image-msg">이미지가 없습니다<br />프로필 이미지를 추가해주세요</p>
+<% } else { %>
+  <img id="profilePreview" src="/uploads/<%= profileImage %>" alt="프로필 이미지" />
+<% } %>
+
+</div>
+
 
             <div class="skills-section">
               <div class="skills" id="skillList">
@@ -305,13 +307,20 @@
   const studyDaysCount = studyData.filter(d => d.total_seconds > 0).length;
   document.getElementById('studyDays').innerText = `현재 ${studyDaysCount}일`;
 
-  // ✅ Chart.js 도넛 차트 한 번만 생성
-  const ctx = document.getElementById("keywordPieChart").getContext("2d");
 
-const labels = keywordData.map(item => item.keyword);
-const data = keywordData.map(item => item.total_seconds);
+// ✅ 상위 3개 키워드만 추출
+const topKeywords = keywordData
+  .sort((a, b) => b.total_seconds - a.total_seconds)
+  .slice(0, 3);
+
+const labels = topKeywords.map(item => item.keyword);
+const data = topKeywords.map(item => item.total_seconds);
 const totalSeconds = data.reduce((a, b) => a + b, 0);
-const backgroundColors = ['#ffc107', '#f28b82', '#a7ffeb', '#d7aefb', '#ccff90'];
+
+// ✅ 색상 리스트 (최대 3개만 쓰면 됨)
+const backgroundColors = ['#ffc107', '#f28b82', '#a7ffeb'];
+
+const ctx = document.getElementById("keywordPieChart").getContext("2d");
 
 new Chart(ctx, {
   type: 'pie',
@@ -319,7 +328,7 @@ new Chart(ctx, {
     labels,
     datasets: [{
       data,
-      backgroundColor: backgroundColors,
+      backgroundColor: backgroundColors.slice(0, labels.length),  // 개수 맞추기
       borderColor: '#fff',
       borderWidth: 2,
     }]
@@ -331,10 +340,10 @@ new Chart(ctx, {
       tooltip: {
         callbacks: {
           label: (context) => {
-            const value = context.parsed;
-            const percentage = ((value / totalSeconds) * 100).toFixed(1);
-            return `${context.label}: ${percentage}%`;
-          }
+  const value = context.parsed;
+  const minutes = Math.floor(value / 60);
+  return `${context.label}: ${minutes}분`;
+}
         }
       },
       datalabels: {
@@ -353,6 +362,9 @@ new Chart(ctx, {
   },
   plugins: [ChartDataLabels]
 });
+
+
+
 
 </script>
 

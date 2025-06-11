@@ -813,3 +813,11 @@ body {
   border-radius: 50%;
   display: inline-block;
 }
+
+
+.no-image-msg {
+  text-align: center;
+  color: #777;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}

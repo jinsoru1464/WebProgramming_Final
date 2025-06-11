@@ -474,13 +474,15 @@ body {
   border-radius: 12px; /* 사진도 둥글게 */
 }
 
-/* + 아이콘 */
+
+
 .photo-placeholder {
-  font-size: 80px;
-  font-weight: bold;
-  color: #222;
-  pointer-events: none;
-  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
 }
 
 
@@ -742,9 +744,9 @@ body {
 }
 
 .plus-icon {
-  font-size: 48px;
-  font-weight: bold;
-  color: #111;
+  font-size: 2rem;
+  color: #aaa;
+  margin-bottom: 4px;
 }
 
 /* 새로 추가된 카드 */
@@ -881,3 +883,49 @@ body {
     border-radius: 6px;
 }
 
+.photo-container {
+  position: relative;
+  display: inline-block;
+}
+
+
+#profilePreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 10px;
+}
+
+/* X 버튼 */
+.delete-overlay {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: none;
+  z-index: 2;
+}
+
+/* hover 시 버튼 보이기 */
+.photo-box:hover .delete-overlay {
+  display: block;
+}
+
+
+
+.no-image-msg {
+  text-align: center;
+  color: #777;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}

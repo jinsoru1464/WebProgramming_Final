@@ -198,34 +198,43 @@ await db.execute(
 
     // ✅ 글 목록 조회
     app.get('/recruit', authenticateToken, async (req, res) => {
-      const perPage = 10;
-      const page = parseInt(req.query.page) || 1;
-      const offset = (page - 1) * perPage;
+  const currentPage = parseInt(req.query.page) || 1;
+  const postsPerPage = 10;
+  const offset = (currentPage - 1) * postsPerPage;
 
-      try {
-        const [[{ count }]] = await db.execute(`SELECT COUNT(*) AS count FROM recruit_posts`);
-        const totalPages = Math.ceil(count / perPage);
+  try {
+    const [[{ count }]] = await db.execute(`SELECT COUNT(*) AS count FROM recruit_posts`);
+    const totalPages = Math.ceil(count / postsPerPage);
 
-        const [posts] = await db.query(`
-          SELECT rp.*, u.nickname AS author
-          FROM recruit_posts rp
-          JOIN users u ON rp.user_id = u.id
-          ORDER BY rp.created_at DESC
-          LIMIT ?, ?
-        `, [offset, perPage]);
+    const [posts] = await db.execute(`
+      SELECT rp.*, u.nickname AS author 
+      FROM recruit_posts rp
+      JOIN users u ON rp.user_id = u.id
+      ORDER BY rp.created_at DESC
+      LIMIT ${postsPerPage} OFFSET ${offset}
+    `);
 
-        res.render('team_recruit', {
-          posts,
-          user: req.user,
-          currentPath: req.path,
-          totalPages,
-          currentPage: page
-        });
-      } catch (err) {
-        console.error('❌ 게시글 조회 오류:', err);
-        res.status(500).send('게시글 로딩 중 오류 발생');
-      }
+    // ✅ 페이지네이션 그룹 계산
+    const groupSize = 10;
+    const currentGroup = Math.floor((currentPage - 1) / groupSize);
+    const groupStart = currentGroup * groupSize + 1;
+    const groupEnd = Math.min(groupStart + groupSize - 1, totalPages);
+
+    res.render('team_recruit', {
+      posts,
+      currentPage,
+      totalPages,
+      groupStart,
+      groupEnd,
+      user: req.user,
+      currentPath: req.originalUrl
     });
+  } catch (err) {
+    console.error('❌ 팀원 모집 페이지 오류:', err);
+    res.status(500).send('서버 오류');
+  }
+});
+
 
     // ✅ 글 상세 보기
     app.get('/recruit/:id', authenticateToken, async (req, res) => {
@@ -362,55 +371,64 @@ app.delete('/recruit/:postId/comments/:commentId', authenticateToken, async (req
 });
 
 
-  // ✅ 커뮤니티 목록 페이지
-  app.get('/community', authenticateToken, async (req, res) => {
-    const category = req.query.category;
-    const currentPage = parseInt(req.query.page) || 1;
-    const postsPerPage = 10;
-    const offset = (currentPage - 1) * postsPerPage;
+// 커뮤니티 목록 페이지
+app.get('/community', authenticateToken, async (req, res) => {
+  const category = req.query.category || ''; // 기본값을 빈 문자열로 설정
+  const currentPage = parseInt(req.query.page) || 1;
+  const postsPerPage = 6;
+  const offset = (currentPage - 1) * postsPerPage;
 
-    const filterClause = category ? 'WHERE category = ?' : '';
-    const filterParams = category ? [category] : [];
+  const filterClause = category ? 'WHERE category = ?' : '';
+  const filterParams = category ? [category] : [];
 
-    try {
-      const [[{ count }]] = await db.execute(
-        `SELECT COUNT(*) AS count FROM community_posts ${filterClause}`,
-        filterParams
-      );
-      const totalPages = Math.ceil(count / postsPerPage);
+  try {
+    const [[{ count }]] = await db.execute(
+      `SELECT COUNT(*) AS count FROM community_posts ${filterClause}`,
+      filterParams
+    );
+    const totalPages = Math.ceil(count / postsPerPage);
 
-      const queryParams = category ? [category] : [];
+    const queryParams = category ? [category] : [];
 
-  const [posts] = await db.execute(
-    `SELECT cp.*, u.nickname AS author
-    FROM community_posts cp
-    JOIN users u ON cp.user_id = u.id
-    ${filterClause}
-    ORDER BY cp.created_at DESC
-    LIMIT ${postsPerPage} OFFSET ${offset}`,
-    queryParams
-  );
+    const [posts] = await db.execute(
+      `SELECT cp.*, u.nickname AS author
+      FROM community_posts cp
+      JOIN users u ON cp.user_id = u.id
+      ${filterClause}
+      ORDER BY cp.created_at DESC
+      LIMIT ${postsPerPage} OFFSET ${offset}`,
+      queryParams
+    );
 
+    let pageTitle = '커뮤니티';
+    if (category === '스터디원 모집') pageTitle = '스터디원 모집';
+    else if (category === 'Q&A') pageTitle = 'Q&A';
+    else if (category === '공모전 후기') pageTitle = '공모전 후기';
 
-      let pageTitle = '커뮤니티';
-      if (category === '스터디원 모집') pageTitle = '스터디원 모집';
-      else if (category === 'Q&A') pageTitle = 'Q&A';
-      else if (category === '공모전 후기') pageTitle = '공모전 후기';
+    // 그룹 시작과 끝 계산 (페이징)
+    const groupSize = 10;
+    const currentGroup = Math.floor((currentPage - 1) / groupSize);
+    const groupStart = currentGroup * groupSize + 1;
+    const groupEnd = Math.min(groupStart + groupSize - 1, totalPages);
 
-      res.render('community-review', {
-        posts,
-        currentPage,
-        totalPages,
-        currentCategory: category,
-        pageTitle,
-        user: req.user,
-        currentPath: req.originalUrl
-      });
-    } catch (err) {
-      console.error('❌ 커미니티 목록 오류:', err);
-      res.status(500).send('서버 오류');
-    }
-  });
+    res.render('community-review', {
+      posts,
+      currentPage,
+      totalPages,
+      currentCategory: category,
+      pageTitle,
+      user: req.user,
+      currentPath: req.originalUrl,
+      category,        // category를 추가로 전달
+      groupStart,      // groupStart를 추가로 전달
+      groupEnd,        // groupEnd를 추가로 전달
+    });
+  } catch (err) {
+    console.error('❌ 커미니티 목록 오류:', err);
+    res.status(500).send('서버 오류');
+  }
+});
+
 
 
   app.get('/community_write', authenticateToken, (req, res) => {
@@ -890,7 +908,6 @@ const [keywordRows] = await db.execute(
 });
 
 // ✅ 포트폴리오 저장 처리
-// ✅ 저장 처리
 app.post('/savePortfolio', upload.single('profileImage'), authenticateToken, async (req, res) => {
   const userId = req.user.id;
   const { about, skills, projects } = req.body;
@@ -899,8 +916,13 @@ app.post('/savePortfolio', upload.single('profileImage'), authenticateToken, asy
     const [portfolioResult] = await db.execute('SELECT * FROM portfolio WHERE user_id = ?', [userId]);
     const portfolio = portfolioResult[0] || {};
 
+    // ✅ 이미지 삭제 여부 먼저 확인
+    const deleteImage = req.body.deleteImage === 'true';
+
     let profileImage;
-    if (req.file) {
+    if (deleteImage) {
+      profileImage = 'default.png';
+    } else if (req.file) {
       profileImage = req.file.filename;
     } else if (portfolio.profile_image && portfolio.profile_image !== 'default.png') {
       profileImage = portfolio.profile_image;
@@ -908,7 +930,7 @@ app.post('/savePortfolio', upload.single('profileImage'), authenticateToken, asy
       profileImage = 'default.png';
     }
 
-    // ✅ UPSERT
+    // ✅ 여기서 profileImage 결정 후 UPDATE
     const [result] = await db.execute(
       `UPDATE portfolio SET about = ?, profile_image = ? WHERE user_id = ?`,
       [about, profileImage, userId]
@@ -921,7 +943,7 @@ app.post('/savePortfolio', upload.single('profileImage'), authenticateToken, asy
       );
     }
 
-    // ✅ 스킬/프로젝트 재삽입
+    // ✅ 스킬/프로젝트 업데이트
     await db.execute('DELETE FROM user_skills WHERE user_id = ?', [userId]);
     await db.execute('DELETE FROM user_projects WHERE user_id = ?', [userId]);
 
@@ -947,6 +969,8 @@ app.post('/savePortfolio', upload.single('profileImage'), authenticateToken, asy
     res.status(500).json({ success: false, message: '서버 오류' });
   }
 });
+
+
 
 
 

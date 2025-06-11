@@ -69,6 +69,10 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append('skills', JSON.stringify(skills));
     formData.append('projects', JSON.stringify(projects));
 
+    const deleteImage = document.getElementById('deleteImage')?.value || 'false';
+formData.append('deleteImage', deleteImage);
+
+
     const profileFile = fileInput.files[0];
     if (profileFile) formData.append('profileImage', profileFile);
 
@@ -192,19 +196,26 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('studyDays').innerText = `현재 ${studyDaysCount}일`;
 
   // 🔹 키워드 파이 차트 생성
-  const ctx = document.getElementById("keywordPieChart").getContext("2d");
-  const labels = keywordData.map(item => item.keyword);
-  const data = keywordData.map(item => item.total_seconds);
-  const totalSeconds = data.reduce((a, b) => a + b, 0);
-  const backgroundColors = ['#ffc107', '#f28b82', '#a7ffeb', '#d7aefb', '#ccff90'];
+  // 🔹 키워드 파이 차트 생성 (상위 3개만 표시)
+const ctx = document.getElementById("keywordPieChart").getContext("2d");
 
-  new Chart(ctx, {
+// 상위 3개 키워드 추출
+const topKeywords = keywordData
+  .sort((a, b) => b.total_seconds - a.total_seconds)
+  .slice(0, 3);
+
+const labels = topKeywords.map(item => item.keyword);
+const data = topKeywords.map(item => item.total_seconds);
+const totalSeconds = data.reduce((a, b) => a + b, 0);
+const backgroundColors = ['#ffc107', '#f28b82', '#a7ffeb'];
+
+new Chart(ctx, {
   type: 'pie',
   data: {
     labels,
     datasets: [{
       data,
-      backgroundColor: backgroundColors,
+      backgroundColor: backgroundColors.slice(0, labels.length),
       borderColor: '#fff',
       borderWidth: 2,
     }]
@@ -216,10 +227,11 @@ document.addEventListener("DOMContentLoaded", () => {
       tooltip: {
         callbacks: {
           label: (context) => {
-            const value = context.parsed;
-            const percentage = ((value / totalSeconds) * 100).toFixed(1);
-            return `${context.label}: ${percentage}%`;
-          }
+  const value = context.parsed;
+  const minutes = Math.floor(value / 60);
+  return `${context.label}: ${minutes}분`;
+}
+
         }
       },
       datalabels: {
@@ -238,6 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
   },
   plugins: [ChartDataLabels]
 });
+
 
   function getColor(seconds) {
     if (seconds >= 7200) return '#216e39';
