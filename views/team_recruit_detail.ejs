@@ -188,7 +188,7 @@
           <div class="comment-header">
             <div class="comment-meta">
               <strong><%= comment.author %></strong>
-              <span class="comment-date"><%= new Date(comment.created_at).toLocaleString('ko-KR') %></span>
+              <span class="comment-date"><%= new Date(comment.created_at_kst).toLocaleString('ko-KR') %></span>
             </div>
             <% if (comment.user_id === user.id) { %>
               <form action="/recruit/<%= post.id %>/comments/<%= comment.id %>?_method=DELETE" method="POST" style="display:inline;">
