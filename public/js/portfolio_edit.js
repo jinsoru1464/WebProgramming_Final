@@ -144,7 +144,7 @@ formData.append('deleteImage', deleteImage);
     wrapper.classList.add('project-added-card');
     wrapper.innerHTML = `
       <div class="project-label">
-        <input type="text" class="project-title-input" placeholder="이름을 입력하세요" />
+        <input type="text" class="project-title-input" placeholder="제목을 입력하세요" />
         <p class="project-delete">X</p>
       </div>
       <hr class="project-divider" />
@@ -169,7 +169,7 @@ formData.append('deleteImage', deleteImage);
   });
 
   const today = new Date();
-  const days = 84;
+  const days = 88;
   let currentColumn = null;
 
   for (let i = 0; i < days; i++) {
@@ -195,7 +195,7 @@ formData.append('deleteImage', deleteImage);
   const studyDaysCount = studyData.filter(d => d.total_seconds > 0).length;
   document.getElementById('studyDays').innerText = `현재 ${studyDaysCount}일`;
 
-  // 🔹 키워드 파이 차트 생성
+
   // 🔹 키워드 파이 차트 생성 (상위 3개만 표시)
 const ctx = document.getElementById("keywordPieChart").getContext("2d");
 
