@@ -26,6 +26,14 @@
     app.set('view engine', 'ejs');
     app.set('views', path.join(__dirname, 'views'));
 
+    // ✅ UTC → KST 시간 문자열로 변환
+function toKSTString(date) {
+  const utc = new Date(date);
+  const kst = new Date(utc.getTime() + 9 * 60 * 60 * 1000); // 9시간 더함
+  return kst.toISOString().replace('T', ' ').slice(0, 19); // 'YYYY-MM-DD HH:MM:SS'
+}
+
+
     // ✅ 로그인 전 메인
     app.get('/', (req, res) => {
       res.render('main(LogX)', { layout: false });
@@ -249,13 +257,19 @@ await db.execute(
         `, [postId]);
 
                 // ✅ 댓글 목록 가져오기 추가
-const [comments] = await db.execute(`
+          const [comments] = await db.execute(`
   SELECT rc.*, u.nickname AS author
   FROM recruit_comments rc
   JOIN users u ON rc.user_id = u.id
   WHERE rc.post_id = ?
   ORDER BY rc.created_at ASC
 `, [postId]);
+
+// ✅ created_at → created_at_kst 필드 추가
+comments.forEach(comment => {
+  comment.created_at_kst = toKSTString(comment.created_at);
+});
+
 
         if (!post) return res.status(404).send('게시글을 찾을 수 없습니다.');
 
@@ -507,12 +521,18 @@ app.get('/community', authenticateToken, async (req, res) => {
       `, [postId]);
 
       const [comments] = await db.execute(`
-  SELECT cc.*, u.nickname AS author
-  FROM community_comments cc
-  JOIN users u ON cc.user_id = u.id
-  WHERE cc.post_id = ?
-  ORDER BY cc.created_at ASC
+  SELECT rc.*, u.nickname AS author
+  FROM community_comments rc
+  JOIN users u ON rc.user_id = u.id
+  WHERE rc.post_id = ?
+  ORDER BY rc.created_at ASC
 `, [postId]);
+
+// ✅ created_at → created_at_kst 필드 추가
+comments.forEach(comment => {
+  comment.created_at_kst = toKSTString(comment.created_at);
+});
+
 
 
       if (!post) return res.status(404).send('게시글을 찾을 수 없습니다.');
